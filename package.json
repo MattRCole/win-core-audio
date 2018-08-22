@@ -1,0 +1,11 @@
+{
+  "main": "bindings.js",
+  "scripts": {
+    "build": "node-gyp build",
+    "install": "node-gyp rebuild",
+    "start": "node ./index.js"
+  },
+  "dependencies": {
+    "nan": "^2.10.0"
+  }
+}

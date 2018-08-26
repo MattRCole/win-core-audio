@@ -391,12 +391,14 @@ namespace WinAPIWrap
 
       return toReturn;
    }
+
    IAudioEndpointVolumePtr getEndpointVolume(IMMDevicePtr device)
    {
       IAudioEndpointVolumePtr toReturn;
       device->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_ALL, NULL, (void **)toReturn.getPointerToPointerToNull());
       return toReturn;
    }
+
    IMMDeviceEnumerator * InjectionFramework::getEnumerator(DWORD dwClsContext)
    {
       if (runningTests)

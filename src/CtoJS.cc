@@ -23,69 +23,84 @@ v8::Local<v8::Value> argv[] = {
     };
 */
 
-WinAPIWrap Bindings::wrapper = WinAPIWrap();
+// WinAPIWrap Bindings::wrapper = WinAPIWrap();
+std::vector<IUnknown *> Bindings::notifiers();
 
-class NotificationsManager : public WinAudioNotificationClientBase
+class DeviceNotificationsManager : public WinAudioNotificationClientBase
 {
-   Nan::Callback *callback;
+  Nan::Callback *callback;
 
-   virtual void HandleAsyncCallback(std::queue<__IMMNotificationClient__::Info> notifications)
-   {
-      namespace IMN = __IMMNotificationClient__;
-      Nan::HandleScope scope;
+  virtual void HandleAsyncCallback(std::queue<__IMMNotificationClient__::Info> notifications)
+  {
+    namespace IMN = __IMMNotificationClient__;
+    Nan::HandleScope scope;
 
-      v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(notifications.size());
+    v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(notifications.size());
 
-      auto size = notifications.size();
+    auto size = notifications.size();
 
-      for (size_t i = 0; i < size; i++)
-      {
-         std::string front = notifications.front().toJsonString();
-         notifications.pop();
-         jsArr->Set(i, Nan::New(front.c_str()).ToLocalChecked());
-      }
+    for (size_t i = 0; i < size; i++)
+    {
+      std::string front = notifications.front().toJsonString();
+      notifications.pop();
+      jsArr->Set(i, Nan::New(front.c_str()).ToLocalChecked());
+    }
 
-      v8::Local<v8::Value> argv[] =
-          {
-              jsArr};
+    v8::Local<v8::Value> argv[] =
+        {
+            jsArr};
 
-      Nan::Call(*callback, 1, argv);
+    Nan::Call(*callback, 1, argv);
 
-      jsArr.Clear();
+    jsArr.Clear();
 
-      return;
-   }
+    return;
+  }
 
-   void destroy()
-   {
+  void destroy()
+  {
+    delete callback;
+  }
+
+public:
+  DeviceNotificationsManager(Nan::Callback *_callback) : callback(_callback)
+  {
+  }
+  ~DeviceNotificationsManager()
+  {
+    if(callback)
+    {
       delete callback;
-   }
-
- public:
-   NotificationsManager(Nan::Callback *_callback) : callback(_callback)
-   {
-   }
+    }
+  }
 };
 
 NAN_MODULE_INIT(Bindings::Init)
 {
-   Nan::SetMethod(target, "registerCallback", RegisterNotificationCallback);
+  Nan::SetMethod(target, "registerCallback", RegisterDeviceNotificationCallback);
 }
 
-NAN_METHOD(Bindings::RegisterNotificationCallback)
+NAN_METHOD(Bindings::RegisterDeviceNotificationCallback)
 {
-   NotificationsManager *notifier = new NotificationsManager(new Nan::Callback(info[0].As<v8::Function>()));
+  using namespace WinAPIWrap;
+  
+  InjectionFramework::COMInitialize();
 
-   bool succeeded = wrapper.registerForNotifications(notifier);
+  IMMDeviceEnumeratorPtr enumerator = InjectionFramework::getEnumerator();
 
-   if (succeeded)
-   {
-      info.GetReturnValue().Set(Nan::New("Success!").ToLocalChecked());
-   }
-   else
-   {
-      info.GetReturnValue().Set(Nan::New("Failed").ToLocalChecked());
-   }
+  DeviceNotificationsManager devManager * = new DeviceNotificationsManager(new Nan::Callback(info[0].As<v8::Function>()));
 
-   return;
+  HRESULT hr = enumerator->RegisterEndpointNotificationCallback(devManager);
+
+  if (SUCCEEDED(hr))
+  {
+    info.GetReturnValue().Set(Nan::New("Success!").ToLocalChecked());
+  }
+  else
+  {
+    delete devManager;
+    info.GetReturnValue().Set(Nan::New("Failed").ToLocalChecked());
+  }
+
+  return;
 }

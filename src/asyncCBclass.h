@@ -67,9 +67,11 @@ class Async
       uv_async_init(uv_default_loop(), &_handle, uv_callback);
    }
 
-   void Destroy()
+   ~Async()
    {
       uv_close(&_handle, _destroy)
+
+      while(uv_is_active(&_handle)); // we will spin our wheels for a while
    }
 };
 
@@ -130,7 +132,8 @@ class Info
       using json = nlohmann::json;
       json j = {
           {"id", id},
-          {"name", IWinAPI::getDefault().} {"flow", flow},
+          {"name", }, 
+          {"flow", flow},
           {"role", role},
           {"state", state},
           {"type", getType()},

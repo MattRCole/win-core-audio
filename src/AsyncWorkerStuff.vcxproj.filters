@@ -19,6 +19,9 @@
     <Filter Include="JSW Source Files">
       <UniqueIdentifier>{974710e9-1142-4cbe-a4c0-092ae3ec27ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestFiles">
+      <UniqueIdentifier>{91a0424e-5d11-4dfe-94ca-90b5c33f53f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="asyncCBclass.h">
@@ -36,6 +39,9 @@
     <ClInclude Include="WinAPIWrap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ComTestInstanciations.h">
+      <Filter>TestFiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="asyncCBclass.cpp">
@@ -49,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="WinAPIWrap.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComTestInstanciations.cpp">
+      <Filter>TestFiles</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

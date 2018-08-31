@@ -3,6 +3,9 @@
 #include <string>
 #include <set>
 #include <mmdeviceapi.h>
+#include <endpointvolume.h>
+#include <functiondiscoverykeys_devpkey.h>
+#include "../src/WinAPIWrap.h"
 
 namespace ComTest
 {
@@ -11,6 +14,7 @@ namespace ComTest
         BOOL muted;
         std::set<IAudioEndpointVolumeCallback *> callbacks;
         void tellEveryone();
+        MockCom::MockAudioEndpointVolume dummyEndpoint;
         public:
         HRESULT RegisterControlChangeNotify(IAudioEndpointVolumeCallback *pNotify);
         HRESULT UnregisterControlChangeNotify(IAudioEndpointVolumeCallback *pNotify);
@@ -18,19 +22,23 @@ namespace ComTest
         HRESULT GetMasterVolumeLevelScalar(float *pfLevel);
         HRESULT SetMute(BOOL bMute, LPCGUID pguidEventContext);
         HRESULT GetMute(BOOL *pbMute);
+
+        IAudioEndpointVolume * operator->() { if (WinAPIWrap::InjectionFramework::initCount) return this; else return &dummyEndpoint; }
     };
 
     class TestPropertyStore : public MockCom::MockPropertyStore {
-        wstring name;
+        std::wstring name;
+    public:
+       HRESULT GetValue(REFPROPERTYKEY key, PROPVARIANT *pv);
     };
 
     class TestDevice;
 
     class TestDeviceCollection : public MockCom::MockDeviceCollection {
-        vector<TestDevice>
+       std::vector<TestDevice> devices;
     };
 
     class TestDeviceEnumerator : public MockCom::MockDeviceEnumerator {
 
-    }
+    };
 }

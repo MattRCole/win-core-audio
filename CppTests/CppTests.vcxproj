@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{BACEE4EC-B84B-4948-B3B6-C2269DB994FF}</ProjectGuid>
-    <RootNamespace>AsyncWorkerStuff</RootNamespace>
+    <ProjectGuid>{4A613182-A5F5-4763-9143-2FA5CBAABB7B}</ProjectGuid>
+    <RootNamespace>CppTests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,21 +70,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Prime\Downloads\libuv-v1.9.1\libuv-v1.9.1\include;$(SolutionDir)..\node_modules\nan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -116,19 +119,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="asyncCBclass.h" />
-    <ClInclude Include="common.h" />
-    <ClInclude Include="ComTestInstanciations.h" />
-    <ClInclude Include="CtoJS.h" />
-    <ClInclude Include="json.hpp" />
-    <ClInclude Include="WinAPIWrap.h" />
+    <ClInclude Include="..\src\common.h" />
+    <ClInclude Include="..\src\ComTestInstanciations.h" />
+    <ClInclude Include="..\src\json.hpp" />
+    <ClInclude Include="..\src\WinAPIWrap.h" />
+    <ClInclude Include="catch.hpp" />
+    <ClInclude Include="TestComTest.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="asyncCBclass.cpp" />
-    <ClCompile Include="ComTestInstanciations.cpp" />
-    <ClCompile Include="CtoJS.cc" />
-    <ClCompile Include="index.cc" />
-    <ClCompile Include="WinAPIWrap.cpp" />
+    <ClCompile Include="..\src\ComTestInstanciations.cpp" />
+    <ClCompile Include="..\src\WinAPIWrap.cpp" />
+    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="TestComTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

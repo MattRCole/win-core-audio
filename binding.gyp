@@ -8,7 +8,8 @@
 		"sources": [
 			"src/index.cc",
 			"src/asyncCBclass.cpp",
-			"src/CtoJS.cc"
+			"src/CtoJS.cc",
+         "src/WinAPIWrap.cpp",
 		]
 	}]
 }

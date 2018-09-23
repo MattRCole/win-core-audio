@@ -1,5 +1,6 @@
 #include "ComTestInstanciations.h"
 #include "../src/WinAPIWrap.h"
+#define TEST_CO_INTIALIZED  if (WinAPIWrap::InjectionFramework::initCount == 0) return CO_E_NOTINITIALIZED;
 
 namespace ComTest {
 
@@ -20,6 +21,7 @@ namespace ComTest {
 
    HRESULT TestAudioEndpointVolume::RegisterControlChangeNotify(IAudioEndpointVolumeCallback *pNotify)
    {
+      TEST_CO_INTIALIZED
       HRESULT hr = S_OK;
       if (pNotify)
       {
@@ -36,6 +38,11 @@ namespace ComTest {
 
    HRESULT TestAudioEndpointVolume::UnregisterControlChangeNotify(IAudioEndpointVolumeCallback *pNotify)
    {
+      TEST_CO_INTIALIZED
+      if (pNotify == NULL)
+      {
+         return E_POINTER;
+      }
       auto  callback = callbacks.find(pNotify);
       if (callback == callbacks.end())
       {
@@ -48,6 +55,7 @@ namespace ComTest {
    }
    HRESULT TestAudioEndpointVolume::SetMasterVolumeLevelScalar(float fLevel, LPCGUID pguidEventContext)
    {
+      TEST_CO_INTIALIZED
       if (fLevel < 0 || fLevel > 1)
       {
          return E_INVALIDARG;
@@ -59,6 +67,7 @@ namespace ComTest {
    }
    HRESULT TestAudioEndpointVolume::GetMasterVolumeLevelScalar(float *pfLevel)
    {
+      TEST_CO_INTIALIZED
       if (pfLevel)
       {
          *pfLevel = scalarVolume;
@@ -71,12 +80,14 @@ namespace ComTest {
    }
    HRESULT TestAudioEndpointVolume::SetMute(BOOL bMute, LPCGUID pguidEventContext)
    {
+      TEST_CO_INTIALIZED
       muted = bMute;
       tellEveryone();
       return S_OK;
    }
    HRESULT TestAudioEndpointVolume::GetMute(BOOL *pbMute)
    {
+      TEST_CO_INTIALIZED
       if (pbMute)
       {
          *pbMute = muted;
@@ -90,9 +101,14 @@ namespace ComTest {
 
    HRESULT TestPropertyStore::GetValue(REFPROPERTYKEY key, PROPVARIANT * pv)
    {
+      TEST_CO_INTIALIZED
       if (key != PKEY_Device_FriendlyName)
       {
-         return E_INVALIDARG;
+         return E_NOTIMPL;
+      }
+      if (pv == NULL)
+      {
+         return E_POINTER;
       }
       else
       {
@@ -103,4 +119,14 @@ namespace ComTest {
       }
    }
 
+   HRESULT TestDevice::GetState(DWORD * pdwState)
+   {
+      TEST_CO_INTIALIZED
+      if (!pdwState)
+         return E_POINTER;
+   }
+
 }
+
+
+#undef TEST_CO_INTIALIZED

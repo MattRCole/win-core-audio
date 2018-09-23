@@ -127,6 +127,18 @@ namespace WinAPIWrap
       return toReturn;
    }
 
+   std::wstring getId(IMMDevicePtr device)
+   {
+      LPWSTR pId = NULL;
+      device->GetId(&pId);
+      std::wstring id;
+      if (pId)
+      {
+         id = std::wstring(pId);
+      }
+      return id;
+   }
+
    IAudioEndpointVolumePtr getEndpointVolume(IMMDevicePtr device)
    {
       IAudioEndpointVolumePtr toReturn;

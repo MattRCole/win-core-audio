@@ -131,5 +131,7 @@ namespace WinAPIWrap
    IMMDevicePtr getDevice(std::wstring id);
    IMMDevicePtr getDevice(std::string uniqueNameIdentifier, EDataFlow flow, DWORD state = DEVICE_STATE_ACTIVE);
 
+   std::wstring getId(IMMDevicePtr device);
+
    IAudioEndpointVolumePtr getEndpointVolume(IMMDevicePtr device);
 }

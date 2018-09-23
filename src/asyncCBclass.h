@@ -21,7 +21,7 @@ class Async
       worker->_sendNotifications();
    }
 
-   static inline void _destroy(uv_async_t *handle)
+   static inline void _destroy(uv_handle_t *handle)
    {
       auto *worker = static_cast<Async *>(handle->data);
       worker->destroy();
@@ -69,9 +69,9 @@ class Async
 
    ~Async()
    {
-      uv_close(&_handle, _destroy)
+      uv_close((uv_handle_t*)&_handle, _destroy);
 
-      while(uv_is_active(&_handle)); // we will spin our wheels for a while
+      while(uv_is_active((uv_handle_t*)&_handle)); // we will spin our wheels for a while
    }
 };
 

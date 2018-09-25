@@ -6,6 +6,7 @@
 #include <mmdeviceapi.h>
 #include <functiondiscoverykeys_devpkey.h>
 #include <string>
+#include <vector>
 
 /*
 // assume info[0]->IsArray()
@@ -24,6 +25,7 @@ v8::Local<v8::Value> argv[] = {
     };
 */
 
+
 // WinAPIWrap Bindings::wrapper = WinAPIWrap();
 std::vector<IUnknown *> Bindings::notifiers = std::vector<IUnknown *>();
 
@@ -40,6 +42,22 @@ float translateVolume(int processedVolume)
 std::string getStringFromJS(v8::Local<v8::Value> wrappedString)
 {
    return std::string(*Nan::Utf8String(wrappedString->ToString()));
+}
+
+v8::Local<v8::Value> wrapString(std::string toWrap)
+{
+   return Nan::New(toWrap.c_str).ToLocalChecked();
+}
+
+v8::Local<v8::Array> getJSarrayFromStringVector(std::vector<std::string> strings)
+{
+   v8::Local<v8::Array> array;
+   for(uint32_t i = 0; i < strings.size(); i++)
+   {
+      Nan::Set(array, i, wrapString(strings.at(i)));
+   }
+
+   return array;
 }
 
 int getInt(v8::Local<v8::Value> wrappedInt)
@@ -420,9 +438,28 @@ NAN_METHOD(Bindings::GetAllNames)
    DWORD state = (unsigned long)getInt(info[1]);
 
    auto names = WinAPIWrap::getAllNames(flow, state);
+
+   info.GetReturnValue().Set(getJSarrayFromStringVector(names));
 }
+//param0: DEVICE_STATE (integer, range 1-7) of different state flags that may be bitwise or'd together to include many device states.
 NAN_METHOD(Bindings::GetAllIDs)
 {
+   if(!info[0]->IsNumber() || !info[1]->IsNumber())
+   {
+      return;
+   }
+   auto flow = getDataFlow(info[0]);
+   DWORD state = (unsigned long)getInt(info[1]);
+
+   auto idsWide = WinAPIWrap::getAllIds(flow, state);
+   std::vector<std::string> ids;
+
+   for(auto idWide : idsWide)
+   {
+      ids.push_back(conversion::string(idWide));
+   }
+
+   info.GetReturnValue().Set(getJSarrayFromStringVector(ids));
 }
 
 NAN_METHOD(Bindings::HelperGetFlowRenderConst)

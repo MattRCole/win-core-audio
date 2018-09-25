@@ -4,6 +4,7 @@
 #include "common.h"
 #include <mmdeviceapi.h>
 #include <endpointvolume.h>
+#include <tuple>
 
 namespace WinAPIWrap
 {
@@ -132,6 +133,10 @@ namespace WinAPIWrap
    IMMDevicePtr getDevice(std::string uniqueNameIdentifier, EDataFlow flow, DWORD state = DEVICE_STATE_ACTIVE);
 
    std::wstring getId(IMMDevicePtr device);
+   std::vector<std::wstring> getAllIds(EDataFlow flow, DWORD state);
+
+
+   std::vector<std::tuple<std::string, std::wstring>>getDeviceNamesAndIds(EDataFlow flow, DWORD state);
 
    IAudioEndpointVolumePtr getEndpointVolume(IMMDevicePtr device);
 }

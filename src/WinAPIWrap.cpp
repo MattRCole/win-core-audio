@@ -139,6 +139,21 @@ namespace WinAPIWrap
       return id;
    }
 
+   std::vector<std::wstring> getAllIds(EDataFlow flow, DWORD state)
+   {
+      auto devices = getVecOfDevices(flow, state);
+      std::vector<std::wstring> ids;
+      for(auto device : devices)
+      {
+         auto id = getId(device);
+         if(id.size())
+         {
+            ids.push_back(id);
+         }
+      }
+      return ids;
+   }
+
    IAudioEndpointVolumePtr getEndpointVolume(IMMDevicePtr device)
    {
       IAudioEndpointVolumePtr toReturn;

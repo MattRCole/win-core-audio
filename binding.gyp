@@ -1,6 +1,6 @@
 {
 	"targets": [{
-		"target_name": "completewinaudio",
+		"target_name": "winCoreAudio",
 		"include_dirs" : [
 			"src",
 			"<!(node -e \"require('nan')\")"

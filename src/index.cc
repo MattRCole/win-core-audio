@@ -6,4 +6,4 @@ NAN_MODULE_INIT(InitModule)
    Bindings::Init(target);
 }
 
-NODE_MODULE(completewinaudio, InitModule);
+NODE_MODULE(winCoreAudio, InitModule);

@@ -199,10 +199,12 @@ NAN_SETTER(AudioDevice::SetState)
    {
       return Nan::ThrowTypeError(Nan::New("State is type: string").ToLocalChecked());
    }
+   //ToDo: get this working
 }
 
 NAN_SETTER(AudioDevice::ReadOnly)
 {
+    return Nan::ThrowError(Nan::New("Property is read only").ToLocalChecked());
 }
 
 //(callback: (newVolume: number) => void): Function, called whenever there is an attempt to change the volume

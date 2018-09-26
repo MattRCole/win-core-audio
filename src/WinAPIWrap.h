@@ -139,4 +139,5 @@ namespace WinAPIWrap
    std::vector<std::tuple<std::string, std::wstring>>getDeviceNamesAndIds(EDataFlow flow, DWORD state);
 
    IAudioEndpointVolumePtr getEndpointVolume(IMMDevicePtr device);
+   IAudioEndpointVolumePtr getEndpointVolume(std::wstring id);
 }

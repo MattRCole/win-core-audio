@@ -1,30 +1,60 @@
 #pragma once
 #include <nan.h>
 #include "WinAPIWrap.h"
+#include <mmdeviceapi.h>
 #include <vector>
-class Bindings
+// class Bindings
+// {
+// public:
+//   static std::vector<IUnknown *> notifiers;
+//   static NAN_MODULE_INIT(Init);
+//   static NAN_METHOD(RegisterDeviceNotificationCallback);
+//   static NAN_METHOD(UnregisterDeviceNotificationCallback);
+//   static NAN_METHOD(RegisterVolumeChangeCallback);
+//   static NAN_METHOD(UnregisterVolumeChangeCallback);
+//   static NAN_METHOD(GetDefaultName);
+//   static NAN_METHOD(GetDefaultId);
+//   static NAN_METHOD(GetDefaultVolume);
+//   static NAN_METHOD(SetDefaultVolume);
+//   static NAN_METHOD(GetId);
+//   static NAN_METHOD(SetVolume);
+//   static NAN_METHOD(GetVolume);
+//   static NAN_METHOD(SetDefault);
+//   static NAN_METHOD(GetAllNames);
+//   static NAN_METHOD(GetAllIDs);
+
+
+//   static NAN_METHOD(HelperGetFlowRenderConst);
+//   static NAN_METHOD(HelperGetFlowCaptureConst);
+//   static NAN_METHOD(HelperGetRoleConsoleConst);
+//   static NAN_METHOD(HelperGetRoleCommunicationsConst);
+// };
+
+class AudioDeviceController 
 {
 public:
-  static std::vector<IUnknown *> notifiers;
-  static NAN_MODULE_INIT(Init);
-  static NAN_METHOD(RegisterDeviceNotificationCallback);
-  static NAN_METHOD(UnregisterDeviceNotificationCallback);
-  static NAN_METHOD(RegisterVolumeChangeCallback);
-  static NAN_METHOD(UnregisterVolumeChangeCallback);
-  static NAN_METHOD(GetDefaultName);
-  static NAN_METHOD(GetDefaultId);
-  static NAN_METHOD(GetDefaultVolume);
-  static NAN_METHOD(SetDefaultVolume);
-  static NAN_METHOD(GetId);
-  static NAN_METHOD(SetVolume);
-  static NAN_METHOD(GetVolume);
-  static NAN_METHOD(SetDefault);
-  static NAN_METHOD(GetAllNames);
-  static NAN_METHOD(GetAllIDs);
+   static IMMNotificationClient * lock;
+   static IMMNotificationClient * onDefaultSpeakerChange;
+   static IMMNotificationClient * onDefaultMicChange;
 
-
-  static NAN_METHOD(HelperGetFlowRenderConst);
-  static NAN_METHOD(HelperGetFlowCaptureConst);
-  static NAN_METHOD(HelperGetRoleConsoleConst);
-  static NAN_METHOD(HelperGetRoleCommunicationsConst);
+   static NAN_MODULE_INIT(Init);
+   static NAN_METHOD(Devices);
+   static NAN_METHOD(LockDefaultTo);
+   static NAN_METHOD(UnlockDefault);
+   static NAN_METHOD(OnDefaultDeviceSpeakerChanged);
+   static NAN_METHOD(OnDefaultDeviceMicChanged);
+   static NAN_METHOD(Default);
 };
+
+class Default : public Nan::ObjectWrap 
+{
+public:
+   static NAN_MODULE_INIT(Init);
+   static NAN_METHOD(Media);
+   static NAN_METHOD(Communications);
+};
+
+class eRole : public Nan::ObjectWrap
+{
+   
+}

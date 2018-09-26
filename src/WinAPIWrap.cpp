@@ -161,6 +161,11 @@ namespace WinAPIWrap
       return toReturn;
    }
 
+   IAudioEndpointVolumePtr getEndpointVolume(std::wstring id)
+   {
+      return getEndpointVolume(getDevice(id));
+   }
+
    IMMDeviceEnumerator * InjectionFramework::getEnumerator(DWORD dwClsContext)
    {
       if (runningTests)

@@ -11,6 +11,7 @@
 
 //Initialize all static constructors
 Nan::Persistent<v8::FunctionTemplate> Default::constructor;
+Nan::Persistent<v8::FunctionTemplate> eRole::constructor;
 
 NAN_MODULE_INIT(Default::Init)
 {
@@ -69,6 +70,69 @@ NAN_SETTER(Default::ReadOnly)
    return Nan::ThrowError(Nan::New("Property is read only").ToLocalChecked());
 }
 
+
+//Begin eRole methods
+NAN_MODULE_INIT(eRole::Init)
+{
+   auto construct = Nan::New<v8::FunctionTemplate>(eRole::New);
+   constructor.Reset(construct);
+   construct->InstanceTemplate()->SetInternalFieldCount(1);
+   construct->SetClassName(Nan::New("ERole").ToLocalChecked());
+
+   Nan::SetAccessor(construct->InstanceTemplate(), Nan::New("speaker").ToLocalChecked(), eRole::GetDefaultDevice, eRole::SetDefaultDevice);
+   Nan::SetAccessor(construct->InstanceTemplate(), Nan::New("mic").ToLocalChecked(), eRole::GetDefaultDevice, eRole::SetDefaultDevice);
+
+   target->Set(Nan::New("ERole").ToLocalChecked(), construct->GetFunction());
+}
+
+NAN_METHOD(eRole::New)
+{
+   if(!info.IsConstructCall())
+   {
+      return Nan::ThrowError(Nan::New("In C++: eRole::New - called without new keyword").ToLocalChecked());
+   }
+
+   if(info.Length() != 1)
+   {
+      return Nan::ThrowError(Nan::New("In C++: eRole::New - Expected 1 parameter: string").ToLocalChecked());
+   }
+
+   if(!info[0]->IsString())
+   {
+      return Nan::ThrowTypeError(Nan::New("In C++ eRole::New - Expected param0 to be of type string").ToLocalChecked());
+   }
+
+   std::string theRole = std::string(*Nan::Utf8String(info[0]));
+   eRole *role = new eRole();
+
+   if(theRole == "media")
+   {
+      role->role = eConsole;
+   }
+   else if (theRole == "communications")
+   {
+      role->role = eCommunications;
+   }
+   else
+   {
+      delete role;
+      return Nan::ThrowTypeError(Nan::New("In C++ eRole:New - Expected param0 to equal: 'media' or 'communications").ToLocalChecked());
+   }
+
+   role->Wrap(info.Holder());
+
+   info.GetReturnValue().Set(info.Holder());
+}
+
+NAN_GETTER(eRole::GetDefaultDevice)
+{
+
+}
+
+NAN_SETTER(eRole::SetDefaultDevice)
+{
+
+}
 
 
 /*

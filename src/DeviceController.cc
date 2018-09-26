@@ -1,12 +1,75 @@
 #include "DeviceController.h"
-#include "asyncCBclass.h"
-#include "WinAPIWrap.h"
-#include <nan.h>
-#include <nan_converters.h>
-#include <mmdeviceapi.h>
-#include <functiondiscoverykeys_devpkey.h>
-#include <string>
-#include <vector>
+#include "AudioDevice.h"
+// #include "asyncCBclass.h"
+// #include "WinAPIWrap.h"
+// #include <nan.h>
+// #include <nan_converters.h>
+// #include <mmdeviceapi.h>
+// #include <functiondiscoverykeys_devpkey.h>
+// #include <string>
+// #include <vector>
+
+//Initialize all static constructors
+Nan::Persistent<v8::FunctionTemplate> Default::constructor;
+
+NAN_MODULE_INIT(Default::Init)
+{
+   auto construct = Nan::New<v8::FunctionTemplate>(Default::New);
+   constructor.Reset(construct);
+   construct->InstanceTemplate()->SetInternalFieldCount(1);
+   construct->SetClassName(Nan::New("DefaultAudioDeviceSelector").ToLocalChecked());
+
+   Nan::SetAccessor(construct->InstanceTemplate(), Nan::New("media").ToLocalChecked(), Default::RoleGetter, Default::ReadOnly);
+   Nan::SetAccessor(construct->InstanceTemplate(), Nan::New("communications").ToLocalChecked(), Default::RoleGetter, Default::ReadOnly);
+
+   target->Set(Nan::New("DefaultAudioDeviceSelector").ToLocalChecked(), construct->GetFunction());
+}
+
+NAN_METHOD(Default::New)
+{
+   if(!info.IsConstructCall())
+   {
+      return Nan::ThrowError(Nan::New("In C++: Default::New - called without new keyword").ToLocalChecked());
+   }
+
+   if(info.Length() != 0)
+   {
+      return Nan::ThrowError(Nan::New("In C++: Default::New - Expected 0 parameters").ToLocalChecked());
+   }
+
+   Default *def = new Default();
+   def->Wrap(info.Holder());
+
+   info.GetReturnValue().Set(info.Holder());
+}
+
+NAN_GETTER(Default::RoleGetter)
+{
+   Default * _this_ = Nan::ObjectWrap::Unwrap<Default>(info.This());
+
+   std::string propName = std::string(*Nan::Utf8String(property));
+
+   if(propName == "media" || propName == "communications")
+   {
+      auto construct = Nan::New(Default::constructor)->GetFunction();
+
+      const int argc = 1;
+      v8::Local<v8::Value> argv[argc] = {
+         property
+      };
+
+      auto eRoleToReturn = Nan::NewInstance(construct, argc, argv).ToLocalChecked();
+
+      info.GetReturnValue().Set(eRoleToReturn);
+   }
+}
+
+NAN_SETTER(Default::ReadOnly)
+{
+   return Nan::ThrowError(Nan::New("Property is read only").ToLocalChecked());
+}
+
+
 
 /*
 // assume info[0]->IsArray()

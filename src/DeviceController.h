@@ -49,9 +49,11 @@ public:
 class Default : public Nan::ObjectWrap 
 {
 public:
+   static Nan::Persistent<v8::FunctionTemplate> constructor;
    static NAN_MODULE_INIT(Init);
-   static NAN_METHOD(Media);
-   static NAN_METHOD(Communications);
+   static NAN_METHOD(New);
+   static NAN_GETTER(RoleGetter);
+   static NAN_SETTER(ReadOnly);
 };
 
 class eRole : public Nan::ObjectWrap

@@ -38,7 +38,8 @@ public:
    static IMMNotificationClient * onDefaultMicChange;
 
    static NAN_MODULE_INIT(Init);
-   static NAN_METHOD(Devices);
+   static NAN_METHOD(Speakers);
+   static NAN_METHOD(Mics);
    static NAN_METHOD(LockDefaultTo);
    static NAN_METHOD(UnlockDefault);
    static NAN_METHOD(OnDefaultDeviceSpeakerChanged);

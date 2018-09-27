@@ -8,7 +8,8 @@
 		"sources": [
 			"src/index.cc",
 			"src/asyncCBclass.cpp",
-			"src/CtoJS.cc",
+			"src/DeviceController.cc",
+         "src/AudioDevice.cc"
          "src/WinAPIWrap.cpp",
 		]
 	}]

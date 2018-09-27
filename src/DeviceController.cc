@@ -126,12 +126,53 @@ NAN_METHOD(eRole::New)
 
 NAN_GETTER(eRole::GetDefaultDevice)
 {
+   WinAPIWrap::InjectionFramework::ComInitialize();
+   eRole * _this_ = Nan::ObjectWrap::Unwrap<eRole>(info.This());
 
+   std::string propName = std::string(*Nan::Utf8String(property));
+   WinAPIWrap::IMMDevicePtr device;
+   auto enumerator = WinAPIWrap::InjectionFramework::getEnumerator();
+   EDataFlow flow;
+   LPWSTR idPtr;
+   conversion::string id;
+
+   if(propName == "speaker")
+   {
+      flow = eRender;
+   }
+   else if(propName == "mic")
+   {
+      flow = eCapture;
+   }
+   else
+   {
+      return Nan::ThrowError(Nan::New("Invalid property, expected 'speaker' or 'mic'").ToLocalChecked());
+   }
+
+   enumerator->GetDefaultAudioEndpoint(flow, _this_->role, (IMMDevice **)device.getPointerToPointerToNull());
+
+   device->GetId(&idPtr);
+
+   if(idPtr)
+   {
+      id = std::wstring(idPtr);
+   }
+   auto wrappedId = Nan::New(id.c_str()).ToLocalChecked();
+
+   auto construct = Nan::New(AudioDevice::constructor)->GetFunction();
+   const int argc = 1;
+   v8::Local<v8::Value> argv[argc] = {
+         wrappedId
+      };
+
+   auto deviceToReturn = Nan::NewInstance(construct, argc, argv).ToLocalChecked();
+
+   info.GetReturnValue().Set(deviceToReturn);
 }
 
 NAN_SETTER(eRole::SetDefaultDevice)
 {
-
+   //do nothing yet
 }
 
 

@@ -1,9 +1,14 @@
 #include <nan.h>
-#include "CtoJS.h"
+#include "AudioDevice.h"
+#include "DeviceController.h"
+
 
 NAN_MODULE_INIT(InitModule)
 {
-   Bindings::Init(target);
+   DeviceController::Init(target);
+   Default::Init(target);
+   eRole::Init(target);
+   AudioDevice::Init(target);
 }
 
 NODE_MODULE(winCoreAudio, InitModule);

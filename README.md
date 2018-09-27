@@ -3,7 +3,7 @@ Bringing the Windows Core Audio API to NodeJS
 
 A simple, intuitive, and powerful way to interact with audio devices on Windows with only two external package dependancies: `node-gyp` and `nan`!
 
-## The following syntax is a work in progress and is nearly complete
+### The following syntax is a work in progress and is nearly complete
 The format may change before intial package publication.
 
 For context:
@@ -81,7 +81,7 @@ unlock the default  speaker/mic:
 
     defaultCommunications.unlockSpeaker();
 
-# Nitty gritty stuff
+### Nitty gritty stuff
 
 It is not guaranteed that this variable:
 
@@ -108,7 +108,7 @@ However this:
 
 returns all speakers regardless of state. 90% of the time, this will return the same speakers/mics as the speakers property.
 
-# Nitty gritty stuff about the Windows Core Audio API itself
+### Nitty gritty stuff about the Windows Core Audio API itself
 
 The possible states for a speaker/mic on windows are as follows: `'active'`, `'disabled'`, `'unplugged'`, or `'not present'`.
 A speaker or mic may be `'unplugged'` or `'not present'`, and can still have its state changed. For example: a device can be disabled so that when it is plugged in, it will default to a disabled state.

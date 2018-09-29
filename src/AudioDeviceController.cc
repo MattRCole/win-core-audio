@@ -15,15 +15,15 @@ Nan::Persistent<v8::FunctionTemplate> eRole::constructor;
 
 NAN_MODULE_INIT(Default::Init)
 {
-   auto construct = Nan::New<v8::FunctionTemplate>(Default::New);
+   v8::Local<v8::FunctionTemplate> construct = Nan::New<v8::FunctionTemplate>(Default::New);
    constructor.Reset(construct);
    construct->InstanceTemplate()->SetInternalFieldCount(1);
-   construct->SetClassName(Nan::New("DefaultAudioDeviceSelector").ToLocalChecked());
+   construct->SetClassName(Nan::New("Default").ToLocalChecked());
 
    Nan::SetAccessor(construct->InstanceTemplate(), Nan::New("media").ToLocalChecked(), Default::RoleGetter, Default::ReadOnly);
    Nan::SetAccessor(construct->InstanceTemplate(), Nan::New("communications").ToLocalChecked(), Default::RoleGetter, Default::ReadOnly);
 
-   target->Set(Nan::New("DefaultAudioDeviceSelector").ToLocalChecked(), construct->GetFunction());
+   target->Set(Nan::New("Default").ToLocalChecked(), construct->GetFunction());
 }
 
 NAN_METHOD(Default::New)
@@ -52,14 +52,14 @@ NAN_GETTER(Default::RoleGetter)
 
    if(propName == "media" || propName == "communications")
    {
-      auto construct = Nan::New(Default::constructor)->GetFunction();
+      v8::Local<v8::Function> construct = Nan::New(Default::constructor)->GetFunction();
 
       const int argc = 1;
       v8::Local<v8::Value> argv[argc] = {
          property
       };
 
-      auto eRoleToReturn = Nan::NewInstance(construct, argc, argv).ToLocalChecked();
+      v8::Local<v8::Object> eRoleToReturn = Nan::NewInstance(construct, argc, argv).ToLocalChecked();
 
       info.GetReturnValue().Set(eRoleToReturn);
    }
@@ -74,7 +74,7 @@ NAN_SETTER(Default::ReadOnly)
 //Begin eRole methods
 NAN_MODULE_INIT(eRole::Init)
 {
-   auto construct = Nan::New<v8::FunctionTemplate>(eRole::New);
+   v8::Local<v8::FunctionTemplate> construct = Nan::New<v8::FunctionTemplate>(eRole::New);
    constructor.Reset(construct);
    construct->InstanceTemplate()->SetInternalFieldCount(1);
    construct->SetClassName(Nan::New("ERole").ToLocalChecked());

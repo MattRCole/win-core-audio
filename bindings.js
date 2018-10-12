@@ -9,4 +9,4 @@
 // module.exports = winaudioComplete
 
 
-var winCoreAudio = require('./build/Release/winCoreAudio.node')
+//var winCoreAudio = require('./build/Release/winCoreAudio.node')

@@ -1,4 +1,4 @@
-var m = require('./bindings');
+var m = require('./build/Release/winCoreAudio.node');
 
 // function callback(array)
 // {
@@ -23,3 +23,5 @@ var m = require('./bindings');
 
 
 var deflt = new m.Default();
+
+var speaker = deflt.media.speaker;

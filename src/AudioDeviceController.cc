@@ -52,11 +52,11 @@ NAN_GETTER(Default::RoleGetter)
 
    if(propName == "media" || propName == "communications")
    {
-      v8::Local<v8::Function> construct = Nan::New(Default::constructor)->GetFunction();
+      v8::Local<v8::Function> construct = Nan::New(eRole::constructor)->GetFunction();
 
       const int argc = 1;
       v8::Local<v8::Value> argv[argc] = {
-         property
+         Nan::New(propName.c_str()).ToLocalChecked()
       };
 
       v8::Local<v8::Object> eRoleToReturn = Nan::NewInstance(construct, argc, argv).ToLocalChecked();
@@ -133,7 +133,7 @@ NAN_GETTER(eRole::GetDefaultDevice)
    WinAPIWrap::IMMDevicePtr device;
    auto enumerator = WinAPIWrap::InjectionFramework::getEnumerator();
    EDataFlow flow;
-   LPWSTR idPtr;
+   LPWSTR idPtr = NULL;
    conversion::string id;
 
    if(propName == "speaker")

@@ -29,7 +29,7 @@ namespace WinAPIWrap
       IUnknown * pUnknown;
       MyUnknownPtr() : pUnknown(nullptr) {}
       MyUnknownPtr(const MyUnknownPtr& other) : pUnknown(other.pUnknown) { addRef(); }
-      MyUnknownPtr(IUnknown *raw) : pUnknown(nullptr) { }
+      MyUnknownPtr(IUnknown *raw) : pUnknown(raw) { }
       MyUnknownPtr &operator=(const MyUnknownPtr &rhs)
       {
          release();
@@ -49,7 +49,7 @@ namespace WinAPIWrap
 
    class IMMDeviceEnumeratorPtr : public MyUnknownPtr {
    private:
-      IMMDeviceEnumerator * getEnumerator() { return dynamic_cast<IMMDeviceEnumerator *>(pUnknown); }
+      IMMDeviceEnumerator * getEnumerator() { return static_cast<IMMDeviceEnumerator *>(pUnknown); }
       MockCom::MockDeviceEnumerator dummyEnum;
    public:
       IMMDeviceEnumeratorPtr() : MyUnknownPtr() {}
@@ -62,7 +62,7 @@ namespace WinAPIWrap
    };
 
    class IMMDeviceCollectionPtr : public MyUnknownPtr {
-      IMMDeviceCollection *getCollection() { return dynamic_cast<IMMDeviceCollection *>(pUnknown); }
+      IMMDeviceCollection *getCollection() { return static_cast<IMMDeviceCollection *>(pUnknown); }
       MockCom::MockDeviceCollection dummyCollection;
    public:
       IMMDeviceCollectionPtr() : MyUnknownPtr() {}
@@ -75,7 +75,7 @@ namespace WinAPIWrap
    };
 
    class IMMDevicePtr : public MyUnknownPtr {
-      IMMDevice *getDevice() { return dynamic_cast<IMMDevice *>(pUnknown); }
+      IMMDevice *getDevice() { return static_cast<IMMDevice *>(pUnknown); }
       MockCom::MockDevice dummyDevice;
    public:
       IMMDevicePtr() : MyUnknownPtr() {}
@@ -89,7 +89,7 @@ namespace WinAPIWrap
 
    class IPropertyStorePtr : public MyUnknownPtr{
    private:
-      IPropertyStore *getPropertyStore() { return dynamic_cast<IPropertyStore *>(pUnknown); }
+      IPropertyStore *getPropertyStore() { return static_cast<IPropertyStore *>(pUnknown); }
       MockCom::MockPropertyStore dummyPropertyStore;
    public:
       IPropertyStorePtr() : MyUnknownPtr() {}
@@ -102,7 +102,7 @@ namespace WinAPIWrap
    };
 
    class IAudioEndpointVolumePtr : public MyUnknownPtr {
-      IAudioEndpointVolume *getEndpoint() { return dynamic_cast<IAudioEndpointVolume *>(pUnknown); }
+      IAudioEndpointVolume *getEndpoint() { return static_cast<IAudioEndpointVolume *>(pUnknown); }
       MockCom::MockAudioEndpointVolume dummyEndpoint;
    public:
       IAudioEndpointVolumePtr() : MyUnknownPtr() {}

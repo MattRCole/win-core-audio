@@ -1,11 +1,13 @@
 #pragma once
 #include <uv.h>
 #include <mmdeviceapi.h>
+#include <endpointvolume.h>
 #include <functiondiscoverykeys_devpkey.h>
 #include <string>
 #include <list>
 #include <queue>
 #include "common.h"
+#include <Rpc.h>
 
 template <typename T>
 class Async
@@ -272,5 +274,66 @@ class WinAudioNotificationClientBase : public IMMNotificationClient, protected A
       SendInfo(toSend);
 
       return S_OK;
+   }
+};
+
+namespace __IAudioEndpointVolumeCallback__ {
+   struct Info {
+      bool muted;
+      bool fromHere;
+      int volume;
+   };
+}
+
+class WinVolumeNotificationClientBase : public IAudioEndpointVolumeCallback, protected Async<__IAudioEndpointVolumeCallback__::Info>
+{
+public:
+   conversion::string deviceId;
+   WinVolumeNotificationClientBase(conversion::string _deviceId);
+   ~WinVolumeNotificationClientBase();
+
+   ULONG AddRef()
+   {
+      return (ULONG)0;
+   }
+
+   ULONG STDMETHODCALLTYPE Release()
+   {
+      return 0;
+   }
+
+   HRESULT QueryInterface(REFIID riid, VOID **ppvInterface)
+   {
+      return E_NOTIMPL;
+   }
+
+
+   // typedef struct AUDIO_VOLUME_NOTIFICATION_DATA
+   // {
+   //    GUID guidEventContext;
+   //    BOOL bMuted;
+   //    float fMasterVolume;
+   //    UINT nChannels;
+   //    float afChannelVolumes[1];
+   // }     AUDIO_VOLUME_NOTIFICATION_DATA;
+   //
+   // typedef struct AUDIO_VOLUME_NOTIFICATION_DATA *PAUDIO_VOLUME_NOTIFICATION_DATA;
+   HRESULT OnNotify(PAUDIO_VOLUME_NOTIFICATION_DATA data)
+   {
+      if (!data)
+         return E_POINTER;
+      bool originatesFromThisProcess = false;
+      int translatedVolume;
+
+
+      RPC_STATUS status;
+      if (UuidCompare(&data->guidEventContext, &(guid::get()), &status) == 0)
+         originatesFromThisProcess = true;
+
+      translatedVolume = (int)(data->fMasterVolume * 100.0);
+
+      __IAudioEndpointVolumeCallback__::Info info = { data->bMuted, originatesFromThisProcess, translatedVolume };
+
+      SendInfo(info);
    }
 };

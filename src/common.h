@@ -10,6 +10,13 @@
     __ss__ << json;           \
     return __ss__.str()
 
+class guid {
+private:
+   static UUID * uuid;
+public:
+   inline static UUID get() { if (uuid) return *uuid; else { uuid = new UUID; UuidCreate(uuid); return *uuid; } }
+};
+
 namespace conversion
 {
    class string

@@ -84,7 +84,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Prime\Downloads\libuv-v1.9.1\libuv-v1.9.1\include;$(SolutionDir)..\node_modules\nan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(USERPROFILE)\.node-gyp\8.11.3\include\node;$(SolutionDir)..\node_modules\nan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="asyncCBclass.cpp" />
+    <ClCompile Include="common.cpp" />
     <ClCompile Include="ComTestInstanciations.cpp" />
     <ClCompile Include="CtoJS.cc" />
     <ClCompile Include="index.cc" />

@@ -131,7 +131,7 @@ NAN_GETTER(eRole::GetDefaultDevice)
 
    std::string propName = std::string(*Nan::Utf8String(property));
    WinAPIWrap::IMMDevicePtr device;
-   auto enumerator = WinAPIWrap::InjectionFramework::getEnumerator();
+   WinAPIWrap::IMMDeviceEnumeratorPtr enumerator = WinAPIWrap::InjectionFramework::getEnumerator();
    EDataFlow flow;
    LPWSTR idPtr = NULL;
    conversion::string id;

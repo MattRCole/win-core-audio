@@ -5,6 +5,12 @@
 #include <common.h>
 #include <string>
 
+
+class VolumeChangeNotification : protected WinVolumeNotificationClientBase
+{
+
+};
+
 //AudioDevice
     //name: string, read-only
     //id: string, read-only

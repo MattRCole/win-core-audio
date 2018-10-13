@@ -59,5 +59,8 @@
     <ClCompile Include="ComTestInstanciations.cpp">
       <Filter>TestFiles</Filter>
     </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

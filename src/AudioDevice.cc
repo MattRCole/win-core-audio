@@ -124,7 +124,7 @@ NAN_SETTER(AudioDevice::SetVolume)
    float rawVolume = translateVolume(value->NumberValue());
    auto endpointVolume = getSetSetupEndpointVolume(info.This());
 
-   endpointVolume->SetMasterVolumeLevelScalar(rawVolume, NULL);
+   endpointVolume->SetMasterVolumeLevelScalar(rawVolume, guid::get());
 
    return;
 }
@@ -155,12 +155,12 @@ NAN_SETTER(AudioDevice::SetIsMuted)
 {
    if (!value->IsBoolean())
    {
-      return Nan::ThrowTypeError(Nan::New("isMute is type: boolean").ToLocalChecked());
+      return Nan::ThrowTypeError(Nan::New("isMuted is type: boolean").ToLocalChecked());
    }
    auto endpointVolume = getSetSetupEndpointVolume(info.This());
    bool isMuted = value->BooleanValue();
 
-   endpointVolume->SetMute(isMuted, NULL);
+   endpointVolume->SetMute(isMuted, guid::get());
 }
 
 NAN_GETTER(AudioDevice::GetState)

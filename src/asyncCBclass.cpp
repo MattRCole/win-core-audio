@@ -1,5 +1,6 @@
 #include "json.hpp"
 #include "asyncCBclass.h"
+#include "WinAPIWrap.h"
 
 
 // void WinAudioNotificationClientBase::_SendNotifications()
@@ -105,4 +106,24 @@ HRESULT WinAudioNotificationClientBase::QueryInterface(REFIID riid, VOID **ppvIn
         return E_NOINTERFACE;
     }
     return S_OK;
+}
+
+WinVolumeNotificationClientBase::WinVolumeNotificationClientBase(conversion::string _deviceId)
+{
+   deviceId = _deviceId;
+
+   WinAPIWrap::InjectionFramework::ComInitialize();
+   
+   auto endpointVolume = WinAPIWrap::getEndpointVolume(deviceId);
+
+   endpointVolume->RegisterControlChangeNotify(this);
+}
+
+WinVolumeNotificationClientBase::~WinVolumeNotificationClientBase()
+{
+   WinAPIWrap::InjectionFramework::ComInitialize();
+
+   auto endpointVolume = WinAPIWrap::getEndpointVolume(deviceId);
+
+   endpointVolume->UnregisterControlChangeNotify(this);
 }

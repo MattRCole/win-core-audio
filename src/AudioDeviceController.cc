@@ -28,12 +28,12 @@ NAN_MODULE_INIT(Default::Init)
 
 NAN_METHOD(Default::New)
 {
-   if(!info.IsConstructCall())
+   if (!info.IsConstructCall())
    {
       return Nan::ThrowError(Nan::New("In C++: Default::New - called without new keyword").ToLocalChecked());
    }
 
-   if(info.Length() != 0)
+   if (info.Length() != 0)
    {
       return Nan::ThrowError(Nan::New("In C++: Default::New - Expected 0 parameters").ToLocalChecked());
    }
@@ -46,18 +46,17 @@ NAN_METHOD(Default::New)
 
 NAN_GETTER(Default::RoleGetter)
 {
-   Default * _this_ = Nan::ObjectWrap::Unwrap<Default>(info.This());
+   Default *_this_ = Nan::ObjectWrap::Unwrap<Default>(info.This());
 
    std::string propName = std::string(*Nan::Utf8String(property));
 
-   if(propName == "media" || propName == "communications")
+   if (propName == "media" || propName == "communications")
    {
       v8::Local<v8::Function> construct = Nan::New(eRole::constructor)->GetFunction();
 
       const int argc = 1;
       v8::Local<v8::Value> argv[argc] = {
-         Nan::New(propName.c_str()).ToLocalChecked()
-      };
+          Nan::New(propName.c_str()).ToLocalChecked()};
 
       v8::Local<v8::Object> eRoleToReturn = Nan::NewInstance(construct, argc, argv).ToLocalChecked();
 
@@ -69,7 +68,6 @@ NAN_SETTER(Default::ReadOnly)
 {
    return Nan::ThrowError(Nan::New("Property is read only").ToLocalChecked());
 }
-
 
 //Begin eRole methods
 NAN_MODULE_INIT(eRole::Init)
@@ -87,17 +85,17 @@ NAN_MODULE_INIT(eRole::Init)
 
 NAN_METHOD(eRole::New)
 {
-   if(!info.IsConstructCall())
+   if (!info.IsConstructCall())
    {
       return Nan::ThrowError(Nan::New("In C++: eRole::New - called without new keyword").ToLocalChecked());
    }
 
-   if(info.Length() != 1)
+   if (info.Length() != 1)
    {
       return Nan::ThrowError(Nan::New("In C++: eRole::New - Expected 1 parameter: string").ToLocalChecked());
    }
 
-   if(!info[0]->IsString())
+   if (!info[0]->IsString())
    {
       return Nan::ThrowTypeError(Nan::New("In C++ eRole::New - Expected param0 to be of type string").ToLocalChecked());
    }
@@ -105,7 +103,7 @@ NAN_METHOD(eRole::New)
    std::string theRole = std::string(*Nan::Utf8String(info[0]));
    eRole *role = new eRole();
 
-   if(theRole == "media")
+   if (theRole == "media")
    {
       role->role = eConsole;
    }
@@ -127,7 +125,7 @@ NAN_METHOD(eRole::New)
 NAN_GETTER(eRole::GetDefaultDevice)
 {
    WinAPIWrap::InjectionFramework::ComInitialize();
-   eRole * _this_ = Nan::ObjectWrap::Unwrap<eRole>(info.This());
+   eRole *_this_ = Nan::ObjectWrap::Unwrap<eRole>(info.This());
 
    std::string propName = std::string(*Nan::Utf8String(property));
    WinAPIWrap::IMMDevicePtr device;
@@ -136,11 +134,11 @@ NAN_GETTER(eRole::GetDefaultDevice)
    LPWSTR idPtr = NULL;
    conversion::string id;
 
-   if(propName == "speaker")
+   if (propName == "speaker")
    {
       flow = eRender;
    }
-   else if(propName == "mic")
+   else if (propName == "mic")
    {
       flow = eCapture;
    }
@@ -153,7 +151,7 @@ NAN_GETTER(eRole::GetDefaultDevice)
 
    device->GetId(&idPtr);
 
-   if(idPtr)
+   if (idPtr)
    {
       id = std::wstring(idPtr);
    }
@@ -162,8 +160,7 @@ NAN_GETTER(eRole::GetDefaultDevice)
    auto construct = Nan::New(AudioDevice::constructor)->GetFunction();
    const int argc = 1;
    v8::Local<v8::Value> argv[argc] = {
-         wrappedId
-      };
+       wrappedId};
 
    auto deviceToReturn = Nan::NewInstance(construct, argc, argv).ToLocalChecked();
 
@@ -174,7 +171,6 @@ NAN_SETTER(eRole::SetDefaultDevice)
 {
    //do nothing yet
 }
-
 
 /*
 // assume info[0]->IsArray()
@@ -192,7 +188,6 @@ v8::Local<v8::Value> argv[] = {
       Nan::Null()
     };
 */
-
 
 // // WinAPIWrap Bindings::wrapper = WinAPIWrap();
 // std::vector<IUnknown *> Bindings::notifiers = std::vector<IUnknown *>();
@@ -292,7 +287,6 @@ v8::Local<v8::Value> argv[] = {
 //    }
 // };
 
-
 // //Unless otherwise specified, the return values of the following functions will conform to these standards:
 //    //On success: a JavaScript value of true (In cases where other return values are expected, the return value of true will be replaced with the expected return information)
 //    //On failur: a JavaScript string object that reports an error and, optionally, describing why the action could not be completed.
@@ -317,14 +311,14 @@ v8::Local<v8::Value> argv[] = {
 //    //Input parameters:
 //       //param0: unique ID that corresponds to the desired registered callback function.
 //    Nan::SetMethod(target, "unregisterVolumeCallback", UnregisterVolumeChangeCallback);
-//    //Returns the friendly name of the specified default device 
+//    //Returns the friendly name of the specified default device
 //    //Input parameters:
 //       //param0: EDataFlow flow (integer) that represents the flow of the device: render for speakers, and capture for microphones
 //       //param1: ERole role (integer) that represents the responsibility of the device: console for media playback and communications for... communications
 //    //Return value:
 //       //On success: A JavaScript String representing the friendly name of the device.
 //    Nan::SetMethod(target, "getDefaultName", GetDefaultName);
-//    //Returns the device ID of the specified default device 
+//    //Returns the device ID of the specified default device
 //    //Input parameters:
 //       //param0: EDataFlow flow (integer) that represents the flow of the device: render for speakers, and capture for microphones
 //       //param1: ERole role (integer) that represents the responsibility of the device: console for media playback and communications for... communications
@@ -336,14 +330,14 @@ v8::Local<v8::Value> argv[] = {
 //       //param0: Device ID (String) corresponding to an active device
 //       //param1: ERole role (integer) that represents the new default of the stated speaker.
 //    Nan::SetMethod(target, "setDefault", SetDefault);
-//    //Returns the volume of the specified default device 
+//    //Returns the volume of the specified default device
 //    //Input parameters:
 //       //param0: EDataFlow flow (integer) that represents the flow of the device: render for speakers, and capture for microphones
 //       //param1: ERole role (integer) that represents the responsibility of the device: console for media playback and communications for... communications
 //    //Return value:
 //       //On success: An integer (from 0-100) that represents the current volume of the device
 //    Nan::SetMethod(target, "getDefaultVolume", GetDefaultVolume);
-//    //Sets the volume of the specified default device 
+//    //Sets the volume of the specified default device
 //    //Input parameters:
 //       //param0: EDataFlow flow (integer) that represents the flow of the device: render for speakers, and capture for microphones
 //       //param1: ERole role (integer) that represents the responsibility of the device: console for media playback and communications for... communications
@@ -354,7 +348,7 @@ v8::Local<v8::Value> argv[] = {
 //       //param0: Device Name Identifier (String) that can uniquely identify the desired device's friendly name
 //       //param1: EDataFlow flow (integer) that represents the flow of the device: render for speakers, and capture for microphones
 //       //param2: DEVICE_STATE (integer, range 1-7) of different state flags that may be bitwise or'd together to include many device states. DEFAULT VALUE: DEVICE_STATE_ACTIVE
-//          //This one needs a short example: 
+//          //This one needs a short example:
 //          //DEVICE_STATE_ACTIVE      1
 //          //DEVICE_STATE_DISABLED    2
 //          //DEVICE_STATE_NOTPRESENT  4
@@ -549,7 +543,7 @@ v8::Local<v8::Value> argv[] = {
 //    }
 //    auto deviceName = getStringFromJS(info[0]);
 //    auto flow = getDataFlow(info[1]);
-   
+
 //    conversion::string id = WinAPIWrap::getId(WinAPIWrap::getDevice(deviceName, flow, state));
 
 //    info.GetReturnValue().Set(Nan::New(id.c_str()).ToLocalChecked());

@@ -8,7 +8,7 @@
 #include <queue>
 #include "common.h"
 #include "WinAPIWrap.h"
-#pragma comment(lib, "rpcrt4.lib")  // UuidCompare - Minimum supported OS Win 2000
+#pragma comment(lib, "rpcrt4.lib") // UuidCompare - Minimum supported OS Win 2000
 #include <windows.h>
 
 template <typename T>
@@ -49,7 +49,6 @@ class Async
    }
 
  protected:
-
    virtual void HandleAsyncCallback(std::queue<T>) = 0;
    virtual void destroyCallback() = 0;
 
@@ -73,10 +72,10 @@ class Async
 
    ~Async()
    {
-      uv_close((uv_handle_t*)&_handle, _destroy);
+      uv_close((uv_handle_t *)&_handle, _destroy);
 
-      while(notReady); // we will spin our wheels for a while
-
+      while (notReady)
+         ; // we will spin our wheels for a while
    }
 };
 
@@ -137,7 +136,9 @@ class Info
       using json = nlohmann::json;
       json j = {
           {"id", id},
-          {"name", }, 
+          {
+              "name",
+          },
           {"flow", flow},
           {"role", role},
           {"state", state},
@@ -280,19 +281,22 @@ class WinAudioNotificationClientBase : public IMMNotificationClient, protected A
    }
 };
 
-namespace __IAudioEndpointVolumeCallback__ {
-   struct Info {
-      bool muted;
-      bool fromHere;
-      float volume;
-   };
-}
+namespace __IAudioEndpointVolumeCallback__
+{
+struct Info
+{
+   bool muted;
+   bool fromHere;
+   float volume;
+};
+} // namespace __IAudioEndpointVolumeCallback__
 
 class WinVolumeNotificationClientBase : public IAudioEndpointVolumeCallback, protected Async<__IAudioEndpointVolumeCallback__::Info>
 {
-protected:
+ protected:
    WinAPIWrap::IAudioEndpointVolumePtr volumePtr;
-public:
+
+ public:
    conversion::string deviceId;
    WinVolumeNotificationClientBase(conversion::string _deviceId);
    ~WinVolumeNotificationClientBase();
@@ -311,7 +315,6 @@ public:
    {
       return E_NOTIMPL;
    }
-
 
    // typedef struct AUDIO_VOLUME_NOTIFICATION_DATA
    // {
@@ -333,7 +336,7 @@ public:
       if (UuidCompare(&data->guidEventContext, guid::get(), &status) == 0)
          originatesFromThisProcess = true;
 
-      __IAudioEndpointVolumeCallback__::Info info = { (bool)data->bMuted, originatesFromThisProcess, data->fMasterVolume };
+      __IAudioEndpointVolumeCallback__::Info info = {(bool)data->bMuted, originatesFromThisProcess, data->fMasterVolume};
 
       SendInfo(info);
       return S_OK;

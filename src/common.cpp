@@ -1,4 +1,3 @@
 #include "common.h"
 
-
-UUID * guid::uuid = nullptr;
+UUID *guid::uuid = nullptr;

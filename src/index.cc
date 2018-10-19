@@ -2,7 +2,6 @@
 #include "AudioDevice.h"
 #include "AudioDeviceController.h"
 
-
 NAN_MODULE_INIT(InitModule)
 {
    //AudioDeviceController::Init(target);

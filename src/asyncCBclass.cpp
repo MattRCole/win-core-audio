@@ -2,7 +2,6 @@
 #include "asyncCBclass.h"
 #include "WinAPIWrap.h"
 
-
 // void WinAudioNotificationClientBase::_SendNotifications()
 // {
 //     std::queue<std::string> toSend;
@@ -71,41 +70,41 @@
 
 WinAudioNotificationClientBase::~WinAudioNotificationClientBase()
 {
-    if (_pEnumerator != NULL)
-    {
-        _pEnumerator->Release();
-        _pEnumerator = NULL;
-    }
+   if (_pEnumerator != NULL)
+   {
+      _pEnumerator->Release();
+      _pEnumerator = NULL;
+   }
 }
 
 ULONG WinAudioNotificationClientBase::Release()
 {
-    ULONG ulRef = InterlockedDecrement(&_cRef);
-    if (0 == ulRef)
-    {
-        delete this;
-    }
-    return ulRef;
+   ULONG ulRef = InterlockedDecrement(&_cRef);
+   if (0 == ulRef)
+   {
+      delete this;
+   }
+   return ulRef;
 }
 
 HRESULT WinAudioNotificationClientBase::QueryInterface(REFIID riid, VOID **ppvInterface)
 {
-    if (IID_IUnknown == riid)
-    {
-        AddRef();
-        *ppvInterface = (IUnknown *)this;
-    }
-    else if (__uuidof(IMMNotificationClient) == riid)
-    {
-        AddRef();
-        *ppvInterface = (IMMNotificationClient *)this;
-    }
-    else
-    {
-        *ppvInterface = NULL;
-        return E_NOINTERFACE;
-    }
-    return S_OK;
+   if (IID_IUnknown == riid)
+   {
+      AddRef();
+      *ppvInterface = (IUnknown *)this;
+   }
+   else if (__uuidof(IMMNotificationClient) == riid)
+   {
+      AddRef();
+      *ppvInterface = (IMMNotificationClient *)this;
+   }
+   else
+   {
+      *ppvInterface = NULL;
+      return E_NOINTERFACE;
+   }
+   return S_OK;
 }
 
 WinVolumeNotificationClientBase::WinVolumeNotificationClientBase(conversion::string _deviceId)
@@ -113,7 +112,7 @@ WinVolumeNotificationClientBase::WinVolumeNotificationClientBase(conversion::str
    deviceId = _deviceId;
 
    WinAPIWrap::InjectionFramework::ComInitialize();
-   
+
    volumePtr = WinAPIWrap::getEndpointVolume(deviceId);
 
    auto hr = volumePtr->RegisterControlChangeNotify(this);
@@ -122,7 +121,6 @@ WinVolumeNotificationClientBase::WinVolumeNotificationClientBase(conversion::str
 WinVolumeNotificationClientBase::~WinVolumeNotificationClientBase()
 {
    WinAPIWrap::InjectionFramework::ComInitialize();
-
 
    volumePtr->UnregisterControlChangeNotify(this);
 }

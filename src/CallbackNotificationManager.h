@@ -24,6 +24,7 @@ class CallbackNotificationManager
       float volumeLock;
       float currentVol;
       bool currentMute;
+
     protected:
       virtual void HandleAsyncCallback(std::queue<__IAudioEndpointVolumeCallback__::Info> info);
       inline virtual void destroyCallback()

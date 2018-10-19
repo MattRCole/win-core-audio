@@ -23,19 +23,18 @@
 //   static NAN_METHOD(GetAllNames);
 //   static NAN_METHOD(GetAllIDs);
 
-
 //   static NAN_METHOD(HelperGetFlowRenderConst);
 //   static NAN_METHOD(HelperGetFlowCaptureConst);
 //   static NAN_METHOD(HelperGetRoleConsoleConst);
 //   static NAN_METHOD(HelperGetRoleCommunicationsConst);
 // };
 
-class AudioDeviceController 
+class AudioDeviceController
 {
-public:
-   static IMMNotificationClient * lock;
-   static IMMNotificationClient * onDefaultSpeakerChange;
-   static IMMNotificationClient * onDefaultMicChange;
+ public:
+   static IMMNotificationClient *lock;
+   static IMMNotificationClient *onDefaultSpeakerChange;
+   static IMMNotificationClient *onDefaultMicChange;
 
    static NAN_MODULE_INIT(Init);
    static NAN_METHOD(Speakers);
@@ -47,9 +46,9 @@ public:
    static NAN_METHOD(Default);
 };
 
-class Default : public Nan::ObjectWrap 
+class Default : public Nan::ObjectWrap
 {
-public:
+ public:
    static Nan::Persistent<v8::FunctionTemplate> constructor;
    static NAN_MODULE_INIT(Init);
    static NAN_METHOD(New);
@@ -59,7 +58,7 @@ public:
 
 class eRole : public Nan::ObjectWrap
 {
-public:
+ public:
    ERole role;
    static Nan::Persistent<v8::FunctionTemplate> constructor;
    static NAN_MODULE_INIT(Init);

@@ -6,11 +6,6 @@
 #include <string>
 
 
-class VolumeChangeNotification : protected WinVolumeNotificationClientBase
-{
-
-};
-
 //AudioDevice
     //name: string, read-only
     //id: string, read-only
@@ -52,3 +47,8 @@ public:
    static NAN_METHOD(LockMute);                 //(toMute: boolean): Function, locks the mute status to the given value. Will be overridden by another call to this function.
    static NAN_METHOD(UnlockMute);               //(): Function, unlocks the mute status of the device, allowing it to be changed by other programs.
 };
+
+
+
+
+

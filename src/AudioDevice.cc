@@ -1,4 +1,7 @@
 #include "AudioDevice.h"
+#include "CallbackNotificationManager.h"
+
+
 
 int translateVolume(float rawVolume)
 {
@@ -7,7 +10,7 @@ int translateVolume(float rawVolume)
 
 float translateVolume(double processedVolume)
 {
-   return ((float)processedVolume / 100.0);
+   return (float)((float)processedVolume / 100.0);
 }
 
 WinAPIWrap::IMMDevicePtr getSetSetupDevice(v8::Local<v8::Object> wrappedAudioDevice)
@@ -16,6 +19,11 @@ WinAPIWrap::IMMDevicePtr getSetSetupDevice(v8::Local<v8::Object> wrappedAudioDev
    AudioDevice *_this_ = Nan::ObjectWrap::Unwrap<AudioDevice>(wrappedAudioDevice);
    auto device = WinAPIWrap::getDevice(_this_->id);
    return device;
+}
+
+AudioDevice * getThisFromInfo(v8::Local<v8::Object> wrappedAudioDevice)
+{
+   return Nan::ObjectWrap::Unwrap<AudioDevice>(wrappedAudioDevice);
 }
 
 WinAPIWrap::IAudioEndpointVolumePtr getSetSetupEndpointVolume(v8::Local<v8::Object> wrappedAudioDevice)
@@ -43,7 +51,7 @@ NAN_MODULE_INIT(AudioDevice::Init)
 
    Nan::SetPrototypeMethod(constructor_, "onVolumeChange", OnVolumeChange);
    Nan::SetPrototypeMethod(constructor_, "onStateChanged", OnStateChanged);
-   Nan::SetPrototypeMethod(constructor_, "onMuteStatusChanged", OnMuteStatusChanged);
+   Nan::SetPrototypeMethod(constructor_, "onMuteChange", OnMuteStatusChanged);
    Nan::SetPrototypeMethod(constructor_, "lockVolume", LockVolume);
    Nan::SetPrototypeMethod(constructor_, "unlockVolume", UnlockVolume);
    Nan::SetPrototypeMethod(constructor_, "lockMute", LockMute);
@@ -210,6 +218,20 @@ NAN_SETTER(AudioDevice::ReadOnly)
 //(callback: (newVolume: number) => void): Function, called whenever there is an attempt to change the volume
 NAN_METHOD(AudioDevice::OnVolumeChange)
 {
+   auto * _this_ = getThisFromInfo(info.This());
+   const auto callbackType = VolumeChangeCallback::VolumeChange;
+   if(info.Length() == 0)
+   {
+      CallbackNotificationManager::DeleteVolumeCallback(_this_->id, callbackType);
+      return;
+   }
+   else if (!info[0]->IsFunction())
+   {
+      return Nan::ThrowTypeError(Nan::New("Expected param0: function").ToLocalChecked());
+   }
+   CallbackNotificationManager::AddVolumeCallback(new Nan::Callback(info[0].As<v8::Function>()), _this_->id, callbackType);
+
+   return;
 }
 
 //(callback: (newState: number) => void): Function, called whenever the state of the device has been changed
@@ -220,24 +242,61 @@ NAN_METHOD(AudioDevice::OnStateChanged)
 //(callback: (muteStatus: boolean) => void): Function, called whenever there is an attempt to change the mute state of the device.
 NAN_METHOD(AudioDevice::OnMuteStatusChanged)
 {
+   auto * _this_ = getThisFromInfo(info.This());
+   const auto callbackType = VolumeChangeCallback::MuteChange;
+   if(info.Length() == 0)
+   {
+      CallbackNotificationManager::DeleteVolumeCallback(_this_->id, callbackType);
+      return;
+   }
+   else if (!info[0]->IsFunction())
+   {
+      return Nan::ThrowTypeError(Nan::New("Expected param0: function").ToLocalChecked());
+   }
+   CallbackNotificationManager::AddVolumeCallback(new Nan::Callback(info[0].As<v8::Function>()), _this_->id, callbackType);
+
+   return;
 }
 
 //(volume: number): Function, locks the volume to the given value. Will be overridden by another call to this function.
 NAN_METHOD(AudioDevice::LockVolume)
 {
+   auto * _this_ = getThisFromInfo(info.This());
+   const auto callbackType = VolumeChangeCallback::VolumeLock;
+   if(info.Length() == 0 || !info[0]->IsNumber()  || info[0]->NumberValue() > 100 || info[0]->NumberValue() < 0)
+   {
+      return Nan::ThrowError(Nan::New("Expected param0: int between 0 and 100").ToLocalChecked());
+   }
+
+   CallbackNotificationManager::AddVolumeCallback(translateVolume(info[0]->NumberValue()), _this_->id, callbackType);
 }
 
 //(): Function, unlocks the volume, allowing it to be changed by other programs.
 NAN_METHOD(AudioDevice::UnlockVolume)
 {
+   auto * _this_ = getThisFromInfo(info.This());
+
+   CallbackNotificationManager::DeleteVolumeCallback(_this_->id, VolumeChangeCallback::VolumeLock); 
 }
 
 //(toMute: boolean): Function, locks the mute status to the given value. Will be overridden by another call to this function.
 NAN_METHOD(AudioDevice::LockMute)
 {
+   auto * _this_ = getThisFromInfo(info.This());
+   const auto callbackType = VolumeChangeCallback::MuteLock;
+   if(info.Length() == 0 || !info[0]->IsBoolean())
+   {
+      return Nan::ThrowError(Nan::New("Expected param0: Boolean").ToLocalChecked());
+   }
+
+   CallbackNotificationManager::AddVolumeCallback(info[0]->BooleanValue(), _this_->id, callbackType);
 }
 
 //(): Function, unlocks the mute status of the device, allowing it to be changed by other programs.
 NAN_METHOD(AudioDevice::UnlockMute)
 {
+   auto * _this_ = getThisFromInfo(info.This());
+
+   CallbackNotificationManager::DeleteVolumeCallback(_this_->id, VolumeChangeCallback::MuteLock); 
 }
+

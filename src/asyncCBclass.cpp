@@ -114,16 +114,15 @@ WinVolumeNotificationClientBase::WinVolumeNotificationClientBase(conversion::str
 
    WinAPIWrap::InjectionFramework::ComInitialize();
    
-   auto endpointVolume = WinAPIWrap::getEndpointVolume(deviceId);
+   volumePtr = WinAPIWrap::getEndpointVolume(deviceId);
 
-   endpointVolume->RegisterControlChangeNotify(this);
+   auto hr = volumePtr->RegisterControlChangeNotify(this);
 }
 
 WinVolumeNotificationClientBase::~WinVolumeNotificationClientBase()
 {
    WinAPIWrap::InjectionFramework::ComInitialize();
 
-   auto endpointVolume = WinAPIWrap::getEndpointVolume(deviceId);
 
-   endpointVolume->UnregisterControlChangeNotify(this);
+   volumePtr->UnregisterControlChangeNotify(this);
 }

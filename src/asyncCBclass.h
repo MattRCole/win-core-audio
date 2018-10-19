@@ -7,7 +7,9 @@
 #include <list>
 #include <queue>
 #include "common.h"
-#include <Rpc.h>
+#include "WinAPIWrap.h"
+#pragma comment(lib, "rpcrt4.lib")  // UuidCompare - Minimum supported OS Win 2000
+#include <windows.h>
 
 template <typename T>
 class Async
@@ -15,6 +17,7 @@ class Async
    uv_async_t _handle;
    uv_mutex_t _mutex;
    std::list<T> _buffer;
+   bool notReady;
 
    static inline void uv_callback(uv_async_t *handle)
    {
@@ -25,9 +28,10 @@ class Async
 
    static inline void _destroy(uv_handle_t *handle)
    {
+      //kill your callbacks
       auto *worker = static_cast<Async *>(handle->data);
-      worker->destroy();
-      delete worker;
+      worker->destroyCallback();
+      worker->notReady = false;
    }
 
    void _sendNotifications()
@@ -45,11 +49,9 @@ class Async
    }
 
  protected:
-   //should be called as the destructor for every class.
-   //think of this as a thread-safe destructor
-   virtual void destroy() = 0;
 
    virtual void HandleAsyncCallback(std::queue<T>) = 0;
+   virtual void destroyCallback() = 0;
 
    virtual void SendInfo(T t)
    {
@@ -62,7 +64,7 @@ class Async
    }
 
  public:
-   Async()
+   Async() : notReady(true)
    {
       uv_mutex_init(&_mutex);
       _handle.data = this;
@@ -73,7 +75,8 @@ class Async
    {
       uv_close((uv_handle_t*)&_handle, _destroy);
 
-      while(uv_is_active((uv_handle_t*)&_handle)); // we will spin our wheels for a while
+      while(notReady); // we will spin our wheels for a while
+
    }
 };
 
@@ -281,12 +284,14 @@ namespace __IAudioEndpointVolumeCallback__ {
    struct Info {
       bool muted;
       bool fromHere;
-      int volume;
+      float volume;
    };
 }
 
 class WinVolumeNotificationClientBase : public IAudioEndpointVolumeCallback, protected Async<__IAudioEndpointVolumeCallback__::Info>
 {
+protected:
+   WinAPIWrap::IAudioEndpointVolumePtr volumePtr;
 public:
    conversion::string deviceId;
    WinVolumeNotificationClientBase(conversion::string _deviceId);
@@ -323,17 +328,14 @@ public:
       if (!data)
          return E_POINTER;
       bool originatesFromThisProcess = false;
-      int translatedVolume;
-
 
       RPC_STATUS status;
-      if (UuidCompare(&data->guidEventContext, &(guid::get()), &status) == 0)
+      if (UuidCompare(&data->guidEventContext, guid::get(), &status) == 0)
          originatesFromThisProcess = true;
 
-      translatedVolume = (int)(data->fMasterVolume * 100.0);
-
-      __IAudioEndpointVolumeCallback__::Info info = { data->bMuted, originatesFromThisProcess, translatedVolume };
+      __IAudioEndpointVolumeCallback__::Info info = { (bool)data->bMuted, originatesFromThisProcess, data->fMasterVolume };
 
       SendInfo(info);
+      return S_OK;
    }
 };

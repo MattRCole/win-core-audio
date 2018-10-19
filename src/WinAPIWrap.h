@@ -34,6 +34,7 @@ namespace WinAPIWrap
       {
          release();
          pUnknown = rhs.pUnknown;
+         addRef();
          return *this;
       }
       MyUnknownPtr &operator=(IUnknown *rawRhs)

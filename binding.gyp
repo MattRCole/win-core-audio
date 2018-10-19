@@ -11,6 +11,8 @@
 			"src/AudioDeviceController.cc",
          "src/AudioDevice.cc",
          "src/WinAPIWrap.cpp",
+         "src/common.cpp",
+         "src/CallbackNotificationManager.cc",
 		]
 	}]
 }

@@ -4,6 +4,8 @@
 #include <sstream>
 #include <mmdeviceapi.h>
 #include <endpointvolume.h>
+#pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
+#include <windows.h>
 
 #define getString(json)       \
     std::stringstream __ss__; \
@@ -14,7 +16,7 @@ class guid {
 private:
    static UUID * uuid;
 public:
-   inline static UUID get() { if (uuid) return *uuid; else { uuid = new UUID; UuidCreate(uuid); return *uuid; } }
+   inline static UUID * get() { if (uuid) return uuid; else { uuid = new UUID; UuidCreate(uuid); return uuid; } }
 };
 
 namespace conversion
@@ -23,30 +25,30 @@ namespace conversion
    {
       std::string data;
 
-      std::string getSkinny(std::wstring _data)
+      std::string getSkinny(const std::wstring _data) const
       {
-         return std::string(_data.begin(), _data.end());
+         return std::string(_data.cbegin(), _data.cend());
       }
       std::wstring getFat() const
       {
-         return std::wstring(data.begin(), data.end());
+         return std::wstring(data.cbegin(), data.cend());
       }
 
-      bool isEqual(const std::string &other)
+      bool isEqual(const std::string &other) const
       {
          return data == other;
       }
 
-      bool isEqual(const std::wstring &other)
+      bool isEqual(const std::wstring &other) const
       {
          return getFat() == other;
       }
 
-      bool isGreater(const std::string &rhs)
+      bool isGreater(const std::string &rhs) const
       {
          return data > rhs;
       }
-      bool isGreater(const std::wstring &rhs)
+      bool isGreater(const std::wstring &rhs) const
       {
          return getFat() > rhs;
       }
@@ -82,51 +84,63 @@ namespace conversion
       }
 
       //conparison operator overloading
-      bool operator==(const std::string &other)
+      bool operator==(const std::string &other) const
       {
          return isEqual(other);
       }
-      bool operator==(const std::wstring &other)
+      bool operator==(const std::wstring &other) const
       {
          return isEqual(other);
       }
-      bool operator!=(const std::string &other)
+      bool operator==(const conversion::string &other) const
+      {
+         return this->data == other.data;
+      }
+      bool operator!=(const std::string &other) const
       {
          return !isEqual(other);
       }
-      bool operator!=(const std::wstring &other)
+      bool operator!=(const std::wstring &other) const
       {
          return !isEqual(other);
       }
-      bool operator>(const std::string &rhs)
+      bool operator>(const std::string &rhs) const
       {
          return isGreater(rhs);
       }
-      bool operator>(const std::wstring &rhs)
+      bool operator>(const std::wstring &rhs) const
       {
          return isGreater(rhs);
       }
-      bool operator<(const std::string &rhs)
+      bool operator>(const conversion::string &rhs) const
+      {
+         return (this->data) > rhs.data;
+      }
+      bool operator<(const std::string &rhs) const
       {
          return !isGreater(rhs) && !isEqual(rhs);
       }
-      bool operator<(const std::wstring &rhs)
+      bool operator<(const std::wstring &rhs) const
       {
          return !isGreater(rhs) && !isEqual(rhs);
       }
-      bool operator>=(const std::string &rhs)
+      bool operator<(const conversion::string &other) const
+      {
+         return this->data < other.data;
+      }
+      bool operator>=(const std::string &rhs) const
       {
          return isGreater(rhs) || isEqual(rhs);
       }
-      bool operator>=(const std::wstring &rhs)
+      bool operator>=(const std::wstring &rhs) const
       {
          return isGreater(rhs) || isEqual(rhs);
       }
-      bool operator<=(const std::string &rhs)
+      bool operator<=(const std::string &rhs) const
       {
          return !isGreater(rhs);
       }
-      bool operator<=(const std::wstring &rhs)
+      bool operator<=(const std::wstring &rhs) const
       {
          return !isGreater(rhs);
       }

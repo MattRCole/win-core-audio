@@ -4,7 +4,7 @@
 
 NAN_MODULE_INIT(InitModule)
 {
-   //AudioDeviceController::Init(target);
+   AudioDeviceController::Init(target);
    Default::Init(target);
    eRole::Init(target);
    AudioDevice::Init(target);

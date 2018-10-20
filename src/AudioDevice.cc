@@ -48,7 +48,7 @@ NAN_MODULE_INIT(AudioDevice::Init)
    Nan::SetAccessor(constructor_->InstanceTemplate(), Nan::New("state").ToLocalChecked(), AudioDevice::GetState, AudioDevice::SetState);
 
    Nan::SetPrototypeMethod(constructor_, "onVolumeChange", OnVolumeChange);
-   Nan::SetPrototypeMethod(constructor_, "onStateChanged", OnStateChanged);
+   Nan::SetPrototypeMethod(constructor_, "onStateChange", OnStateChanged);
    Nan::SetPrototypeMethod(constructor_, "onMuteChange", OnMuteStatusChanged);
    Nan::SetPrototypeMethod(constructor_, "lockVolume", LockVolume);
    Nan::SetPrototypeMethod(constructor_, "unlockVolume", UnlockVolume);
@@ -235,6 +235,18 @@ NAN_METHOD(AudioDevice::OnVolumeChange)
 //(callback: (newState: number) => void): Function, called whenever the state of the device has been changed
 NAN_METHOD(AudioDevice::OnStateChanged)
 {
+   // auto *_this_ = getThisFromInfo(info.This());
+   // if(info.Length() == 0)
+   // {
+   //    CallbackNotificationManager::RemoveStateChangeNotification(_this_->id);
+   //    return;
+   // }
+   // else if(!info[0]->IsFunction())
+   // {
+   //    return Nan::ThrowTypeError(Nan::New("Expected param0: function").ToLocalChecked());
+   // }
+
+   // CallbackNotificationManager::AddStateChangeNotification(new Nan::Callback(info[0].As<v8::Function>()), _this_->id);
 }
 
 //(callback: (muteStatus: boolean) => void): Function, called whenever there is an attempt to change the mute state of the device.

@@ -234,12 +234,13 @@ std::string getNameDefault(ERole role, EDataFlow flow);
 std::vector<std::string> getAllNames(EDataFlow flow, DWORD state);
 
 IMMDevicePtr getDevice(std::wstring id);
+IMMDevicePtr getDefault(EDataFlow flow, ERole role);
 IMMDevicePtr getDevice(std::string uniqueNameIdentifier, EDataFlow flow, DWORD state = DEVICE_STATE_ACTIVE);
 
 std::wstring getId(IMMDevicePtr device);
 std::vector<std::wstring> getAllIds(EDataFlow flow, DWORD state);
 
-std::vector<std::tuple<std::string, std::wstring>> getDeviceNamesAndIds(EDataFlow flow, DWORD state);
+//std::vector<std::tuple<std::string, std::wstring>> getDeviceNamesAndIds(EDataFlow flow, DWORD state);
 
 IAudioEndpointVolumePtr getEndpointVolume(IMMDevicePtr device);
 IAudioEndpointVolumePtr getEndpointVolume(std::wstring id);

@@ -80,6 +80,17 @@ std::string getNameDefault(ERole role, EDataFlow flow)
 
    return getName(device);
 }
+
+IMMDevicePtr getDefault(EDataFlow flow, ERole role)
+{
+   IMMDeviceEnumeratorPtr enumerator = InjectionFramework::getEnumerator();
+   IMMDevicePtr device;
+
+   enumerator->GetDefaultAudioEndpoint(flow, role, (IMMDevice **)device.getPointerToPointerToNull());
+
+   return device;
+}
+
 std::vector<std::string> getAllNames(EDataFlow flow, DWORD state)
 {
    std::vector<std::string> toReturn;

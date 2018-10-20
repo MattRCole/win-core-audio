@@ -37,13 +37,14 @@ class AudioDeviceController
    static IMMNotificationClient *onDefaultMicChange;
 
    static NAN_MODULE_INIT(Init);
-   static NAN_METHOD(Speakers);
-   static NAN_METHOD(Mics);
-   static NAN_METHOD(LockDefaultTo);
-   static NAN_METHOD(UnlockDefault);
-   static NAN_METHOD(OnDefaultDeviceSpeakerChanged);
-   static NAN_METHOD(OnDefaultDeviceMicChanged);
-   static NAN_METHOD(Default);
+   static NAN_GETTER(Devices);
+   // static NAN_GETTER(AllDevices);
+   // static NAN_METHOD(LockDefaultTo);
+   // static NAN_METHOD(UnlockDefault);
+   // static NAN_METHOD(OnDefaultDeviceSpeakerChanged);
+   // static NAN_METHOD(OnDefaultDeviceMicChanged);
+   static NAN_GETTER(GetDefault);
+   static NAN_SETTER(ReadOnly);
 };
 
 class Default : public Nan::ObjectWrap

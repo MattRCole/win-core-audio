@@ -102,60 +102,18 @@ enum MessageType
    StateChange,
    PropertyChange
 };
-class Info
+struct Info
 {
- private:
-   std::string getType()
-   {
-      switch (type)
-      {
-      case DefaultChanged:
-         return "defaultChanged";
-      case DeviceAdded:
-         return "deviceAdded";
-      case DeviceRemoved:
-         return "deviceRemoved";
-      case StateChange:
-         return "stateChange";
-      case PropertyChange:
-         return "propertyChange";
-      }
-      return "undefined";
-   }
-
- public:
    conversion::string id;
    EDataFlow flow;
    ERole role;
    DWORD state;
    MessageType type;
    PROPERTYKEY key;
-
-   std::string toJsonString()
-   {
-      using json = nlohmann::json;
-      json j = {
-          {"id", id},
-          {
-              "name",
-          },
-          {"flow", flow},
-          {"role", role},
-          {"state", state},
-          {"type", getType()},
-          {"pid", key.pid},
-          {"data1", key.fmtid.Data1},
-          {"data2", key.fmtid.Data2},
-          {"data3", key.fmtid.Data3},
-          {"data4", key.fmtid.Data4},
-      };
-
-      return j.dump(0);
-   }
 };
 } // namespace __IMMNotificationClient__
 
-class WinAudioNotificationClientBase : public IMMNotificationClient, protected Async<__IMMNotificationClient__::Info>
+class WinDeviceNotificationClientBase : public IMMNotificationClient, protected Async<__IMMNotificationClient__::Info>
 {
 
    LONG _cRef;
@@ -167,20 +125,11 @@ class WinAudioNotificationClientBase : public IMMNotificationClient, protected A
    //called by node's event loop
    //static inline void asyncCallback(uv_async_t *handle)
    //{
-   //    auto *worker = static_cast<WinAudioNotificationClientBase*>(handle->data);
+   //    auto *worker = static_cast<WinDeviceNotificationClientBase*>(handle->data);
    //    worker->_SendNotifications(); //since this is static, we must get the context (object) and call its _SendNotifications()
    //}
 
    //void _SendNotifications();
-
-   enum MessageType
-   {
-      DefaultChanged,
-      DeviceAdded,
-      DeviceRemoved,
-      StateChange,
-      PropertyChange
-   };
 
  protected:
    //needs to instanciate
@@ -190,7 +139,7 @@ class WinAudioNotificationClientBase : public IMMNotificationClient, protected A
    //void SendNotification(Info info);
 
  public:
-   WinAudioNotificationClientBase() : _cRef(1),
+   WinDeviceNotificationClientBase() : _cRef(1),
                                       _pEnumerator(NULL) //,
    //                                   isEnrolled(true)
    {
@@ -201,7 +150,7 @@ class WinAudioNotificationClientBase : public IMMNotificationClient, protected A
       //    uv_async_init(uv_default_loop(), &asyncHandle, asyncCallback);
    }
 
-   ~WinAudioNotificationClientBase();
+   ~WinDeviceNotificationClientBase();
 
    void setEnum(IMMDeviceEnumerator *pEnum) { _pEnumerator = pEnum; }
 
@@ -230,31 +179,31 @@ class WinAudioNotificationClientBase : public IMMNotificationClient, protected A
       return S_OK;
    }
 
-   HRESULT STDMETHODCALLTYPE OnDeviceAdded(LPCWSTR pwstrDeviceId)
+   HRESULT OnDeviceAdded(LPCWSTR pwstrDeviceId)
    {
-      namespace IMN = __IMMNotificationClient__;
+      /*namespace IMN = __IMMNotificationClient__;
       IMN::Info toSend = {};
       toSend.type = IMN::DeviceAdded;
       toSend.id = pwstrDeviceId;
 
-      SendInfo(toSend);
+      SendInfo(toSend);*/
 
       return S_OK;
    }
 
-   HRESULT STDMETHODCALLTYPE OnDeviceRemoved(LPCWSTR pwstrDeviceId)
+   HRESULT OnDeviceRemoved(LPCWSTR pwstrDeviceId)
    {
-      namespace IMN = __IMMNotificationClient__;
+      /*namespace IMN = __IMMNotificationClient__;
       IMN::Info toSend = {};
       toSend.type = IMN::DeviceRemoved;
       toSend.id = pwstrDeviceId;
 
-      SendInfo(toSend);
+      SendInfo(toSend);*/
 
       return S_OK;
    }
 
-   HRESULT STDMETHODCALLTYPE OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState)
+   HRESULT OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState)
    {
       namespace IMN = __IMMNotificationClient__;
       IMN::Info toSend = {};
@@ -267,15 +216,15 @@ class WinAudioNotificationClientBase : public IMMNotificationClient, protected A
       return S_OK;
    }
 
-   HRESULT STDMETHODCALLTYPE OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key)
+   HRESULT OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key)
    {
-      namespace IMN = __IMMNotificationClient__;
+      /*namespace IMN = __IMMNotificationClient__;
       IMN::Info toSend = {};
       toSend.type = IMN::PropertyChange;
       toSend.id = pwstrDeviceId;
       toSend.key = key;
 
-      SendInfo(toSend);
+      SendInfo(toSend);*/
 
       return S_OK;
    }

@@ -1,27 +1,34 @@
-var m = require('./build/Debug/winCoreAudio.node');
+var audioController = require('./build/Release/winCoreAudio.node');
 
-var deflt = new m.Default();
+var speaker = audioController.default.media.speaker;
 
-var mic = deflt.media.mic;
-
-console.log(mic);
-
-var speaker = deflt.media.speaker;
-
-console.log(speaker);
+// console.log(speaker);
 
 // speaker.onVolumeChange(function(newVol) { console.log(newVol)});
 
 // speaker.onMuteChange(function(muteStatus) { console.log(muteStatus) } );
 
-speaker.lockVolume(50);
+// speaker.lockVolume(50);
 
 // speaker.unlockVolume();
 
-speaker.lockMute(false);
+// speaker.lockMute(false);
 
 // speaker.unlockMute();
 
-var interval = setInterval( function() {console.log('waiting');}, 1000);
+speaker.onVolumeChange(function(newVolume) {console.log(newVolume)});
 
-console.log('hello')
+var newVolume = 0;
+var mute = false;
+var interval = setInterval( function() {
+   newVolume = (newVolume + 1) % 101;
+   let toMute = newVolume % 5;
+   audioController.default.media.speaker.volume = newVolume;
+   if(toMute === 0)
+   {
+      audioController.default.media.speaker.mute = mute;
+      mute = !mute;
+   }
+}, 100);
+
+// console.log('hello')

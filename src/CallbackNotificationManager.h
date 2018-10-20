@@ -1,6 +1,9 @@
 #include <nan.h>
 #include <map>
 #include <asyncCBclass.h>
+#include <common.h>
+#include <tuple>
+#include <uv.h>
 
 namespace VolumeChangeCallback
 {
@@ -16,6 +19,10 @@ enum Type
 class CallbackNotificationManager
 {
  private:
+   static const int NotifyWasDefault = 0;
+   static const int NotifyIsDefault = 1;
+   static void addGenericDefaultNotification(int toOrWas, Nan::Callback * callback, conversion::string id);
+   static void removeGenericDefaultNotification(int toOrWas, conversion::string id);
    class VolumeChangeNotificationClient : protected WinVolumeNotificationClientBase
    {
       Nan::Callback *callback;
@@ -66,7 +73,54 @@ class CallbackNotificationManager
       conversion::string id;
       VolumeChangeCallback::Type type;
    };
+   // class DeviceChangeNotificationClient : protected WinDeviceNotificationClientBase
+   // {
+   //  private:
+   //    static conversion::string defaultComMicId;
+   //    static conversion::string defaultMultiMicId;
+   //    static conversion::string defaultComSpeakerId;
+   //    static conversion::string defaultMultiSpeakerId;
+   //    static bool initialized;
+   //    WinAPIWrap::IMMDeviceEnumeratorPtr enumerator;
+
+   //    inline static conversion::string & getDefault(EDataFlow flow, ERole role) 
+   //    {
+   //       return role == eCommunications ?
+   //          flow == eRender ? defaultComSpeakerId : defaultComMicId
+   //       :
+   //          flow == eRender ? defaultMultiSpeakerId : defaultMultiMicId; 
+   //    }
+
+   //    static void initDefaults();
+
+   //    void handleDefaultChangeNotifications(__IMMNotificationClient__::Info info);
+   //    void handleStateChangeNotifications(__IMMNotificationClient__::Info info);
+   //  protected:
+   //    inline virtual void HandleAsyncCallback(std::queue<__IMMNotificationClient__::Info> info);
+   //    inline virtual void destroyCallback();
+   //  public:
+   //    uv_mutex_t stateMutex;
+   //    uv_mutex_t defaultMutex;
+   //    DeviceChangeNotificationClient()
+   //    {
+   //       using namespace WinAPIWrap;
+   //       InjectionFramework::ComInitialize();
+   //       enumerator = InjectionFramework::getEnumerator();
+   //       enumerator->RegisterEndpointNotificationCallback(this);
+   //       uv_mutex_init(&stateMutex);
+   //       uv_mutex_init(&defaultMutex);
+   //    }
+   //    ~DeviceChangeNotificationClient()
+   //    {
+   //       enumerator->UnregisterEndpointNotificationCallback(this);
+   //    }
+   // };
+   // static DeviceChangeNotificationClient deviceClient;
    static std::map<VolumeKey, VolumeChangeNotificationClient *, bool (*)(const VolumeKey &, const VolumeKey &)> callbacks;
+   // static std::map<conversion::string, std::tuple<DWORD, Nan::Callback *>, bool (*)(const conversion::string &, const conversion::string &)> stateChangeWatch;
+   // static std::map<conversion::string, std::tuple<Nan::Callback *, Nan::Callback *>, bool (*)(const conversion::string &, const conversion::string &)> defaultDeviceWatch;
+   // static Nan::Callback * deviceRemovedCallback;
+
    static inline void deleteDupes(VolumeKey toDelete)
    {
       auto dupe = callbacks.find(toDelete);
@@ -79,7 +133,8 @@ class CallbackNotificationManager
    }
 
  public:
-   inline static bool compare(const VolumeKey &lhs, const VolumeKey &rhs) { return lhs.id == rhs.id ? lhs.type < rhs.type : lhs.id < rhs.id; }
+   inline static bool compareVolumeKey(const VolumeKey &lhs, const VolumeKey &rhs) { return lhs.id == rhs.id ? lhs.type < rhs.type : lhs.id < rhs.id; }
+   // inline static bool compareConversionString(const conversion::string &lhs, const conversion::string &rhs) { return lhs < rhs;}
    CallbackNotificationManager() = delete;
    static inline void AddVolumeCallback(Nan::Callback *callback, conversion::string id, VolumeChangeCallback::Type typeOfCallback)
    {
@@ -90,6 +145,13 @@ class CallbackNotificationManager
 
       callbacks[key] = toAdd;
    }
+
+   // static void AddWasDefaultDeviceNotification(Nan::Callback * callback, conversion::string id);
+   // static void AddIsDefaultDeviceNotification(Nan::Callback * callback, conversion::string id);
+   // static void RemoveWasDefaultDeviceNotification(conversion::string id);
+   // static void RemoveIsDefaultDeviceNotification(conversion::string id);
+   // static void AddStateChangeNotification(Nan::Callback * callback, conversion::string id);
+   // static void RemoveStateChangeNotification(conversion::string id);
 
    static inline void AddVolumeCallback(bool muteLockState, conversion::string id, VolumeChangeCallback::Type typeOfCallback)
    {

@@ -116,6 +116,10 @@ class string
    {
       return !isEqual(other);
    }
+   bool operator!=(const conversion::string &other) const
+   {
+      return !(this->data == other.data);
+   }
    bool operator>(const std::string &rhs) const
    {
       return isGreater(rhs);

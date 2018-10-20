@@ -1,4 +1,3 @@
-#include "json.hpp"
 #include "asyncCBclass.h"
 #include "WinAPIWrap.h"
 
@@ -68,7 +67,7 @@
 //     uv_async_send(&this->asyncHandle);
 // }
 
-WinAudioNotificationClientBase::~WinAudioNotificationClientBase()
+WinDeviceNotificationClientBase::~WinDeviceNotificationClientBase()
 {
    if (_pEnumerator != NULL)
    {
@@ -77,7 +76,7 @@ WinAudioNotificationClientBase::~WinAudioNotificationClientBase()
    }
 }
 
-ULONG WinAudioNotificationClientBase::Release()
+ULONG WinDeviceNotificationClientBase::Release()
 {
    ULONG ulRef = InterlockedDecrement(&_cRef);
    if (0 == ulRef)
@@ -87,7 +86,7 @@ ULONG WinAudioNotificationClientBase::Release()
    return ulRef;
 }
 
-HRESULT WinAudioNotificationClientBase::QueryInterface(REFIID riid, VOID **ppvInterface)
+HRESULT WinDeviceNotificationClientBase::QueryInterface(REFIID riid, VOID **ppvInterface)
 {
    if (IID_IUnknown == riid)
    {

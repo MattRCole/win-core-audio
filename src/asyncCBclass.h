@@ -118,36 +118,13 @@ class WinDeviceNotificationClientBase : public IMMNotificationClient, protected 
 
    LONG _cRef;
    IMMDeviceEnumerator *_pEnumerator;
-   //uv_async_t asyncHandle;
-   //uv_mutex_t _mutex;
-   //std::list<std::string> notificationBuffer;
-
-   //called by node's event loop
-   //static inline void asyncCallback(uv_async_t *handle)
-   //{
-   //    auto *worker = static_cast<WinDeviceNotificationClientBase*>(handle->data);
-   //    worker->_SendNotifications(); //since this is static, we must get the context (object) and call its _SendNotifications()
-   //}
-
-   //void _SendNotifications();
 
  protected:
-   //needs to instanciate
-   //virtual void HandleAsyncCallback(std::queue<std::string> notifications) = 0;
-   //bool isEnrolled;
-   //uv_mutex_t _enrolledMutex;
-   //void SendNotification(Info info);
 
  public:
    WinDeviceNotificationClientBase() : _cRef(1),
-                                      _pEnumerator(NULL) //,
-   //                                   isEnrolled(true)
+                                      _pEnumerator(NULL) 
    {
-
-      //    auto success = uv_mutex_init(&_mutex);
-      //    success = uv_mutex_init(&_enrolledMutex);
-      //    asyncHandle.data = this;
-      //    uv_async_init(uv_default_loop(), &asyncHandle, asyncCallback);
    }
 
    ~WinDeviceNotificationClientBase();
@@ -156,16 +133,16 @@ class WinDeviceNotificationClientBase : public IMMNotificationClient, protected 
 
    // IUnknown methods -- AddRef, Release, and QueryInterface
 
-   ULONG STDMETHODCALLTYPE AddRef() { return InterlockedIncrement(&_cRef); }
+   ULONG AddRef() { return InterlockedIncrement(&_cRef); }
 
-   ULONG STDMETHODCALLTYPE Release();
+   ULONG Release();
 
-   HRESULT STDMETHODCALLTYPE QueryInterface(
+   HRESULT QueryInterface(
        REFIID riid, VOID **ppvInterface);
 
    // Callback methods for device-event notifications.
 
-   HRESULT STDMETHODCALLTYPE OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
+   HRESULT OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
    {
       namespace IMN = __IMMNotificationClient__;
       IMN::Info toSend = {};
@@ -181,25 +158,12 @@ class WinDeviceNotificationClientBase : public IMMNotificationClient, protected 
 
    HRESULT OnDeviceAdded(LPCWSTR pwstrDeviceId)
    {
-      /*namespace IMN = __IMMNotificationClient__;
-      IMN::Info toSend = {};
-      toSend.type = IMN::DeviceAdded;
-      toSend.id = pwstrDeviceId;
-
-      SendInfo(toSend);*/
 
       return S_OK;
    }
 
    HRESULT OnDeviceRemoved(LPCWSTR pwstrDeviceId)
    {
-      /*namespace IMN = __IMMNotificationClient__;
-      IMN::Info toSend = {};
-      toSend.type = IMN::DeviceRemoved;
-      toSend.id = pwstrDeviceId;
-
-      SendInfo(toSend);*/
-
       return S_OK;
    }
 
@@ -218,14 +182,6 @@ class WinDeviceNotificationClientBase : public IMMNotificationClient, protected 
 
    HRESULT OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key)
    {
-      /*namespace IMN = __IMMNotificationClient__;
-      IMN::Info toSend = {};
-      toSend.type = IMN::PropertyChange;
-      toSend.id = pwstrDeviceId;
-      toSend.key = key;
-
-      SendInfo(toSend);*/
-
       return S_OK;
    }
 };
@@ -265,16 +221,6 @@ class WinVolumeNotificationClientBase : public IAudioEndpointVolumeCallback, pro
       return E_NOTIMPL;
    }
 
-   // typedef struct AUDIO_VOLUME_NOTIFICATION_DATA
-   // {
-   //    GUID guidEventContext;
-   //    BOOL bMuted;
-   //    float fMasterVolume;
-   //    UINT nChannels;
-   //    float afChannelVolumes[1];
-   // }     AUDIO_VOLUME_NOTIFICATION_DATA;
-   //
-   // typedef struct AUDIO_VOLUME_NOTIFICATION_DATA *PAUDIO_VOLUME_NOTIFICATION_DATA;
    HRESULT OnNotify(PAUDIO_VOLUME_NOTIFICATION_DATA data)
    {
       if (!data)

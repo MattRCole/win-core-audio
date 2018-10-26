@@ -8,7 +8,7 @@ The format may change before intial package publication.
 
 For context:
 
-    var audioController = require('core-win-audio');
+    var audioController = require('win-core-audio');
 
 set the volume of the system speakers or mic:
 

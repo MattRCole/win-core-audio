@@ -1,5 +1,5 @@
 {
-  "main": "bindings.js",
+  "main": "index.js",
   "scripts": {
     "build": "node-gyp build",
     "install": "node-gyp rebuild",
@@ -7,5 +7,20 @@
   },
   "dependencies": {
     "nan": "^2.10.0"
-  }
+  },
+  "description": "Simple, intuitive audio device controll for Windows",
+  "homepage": "https://github.com/MattRCole/win-core-audio#readme",
+  "license": "MIT",
+  "name": "win-core-audio",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/MattRCole/win-core-audio.git"
+  },
+  "contributors": [
+      {
+      "name": "Matthew Cole",
+      "email": "smacksumpinsoon@gmail.com",
+      "url": "https://github.com/MattRCole"
+      }
+   ]
 }

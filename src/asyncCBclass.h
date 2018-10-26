@@ -79,19 +79,6 @@ class Async
    }
 };
 
-// typedef struct _GUID {
-//     unsigned long  Data1;
-//     unsigned short Data2;
-//     unsigned short Data3;
-//     unsigned char  Data4[ 8 ];
-// } GUID;
-
-// typedef struct _tagpropertykey
-//     {
-//     GUID fmtid;
-//     DWORD pid;
-//     } 	PROPERTYKEY;
-
 namespace __IMMNotificationClient__
 {
 enum MessageType
